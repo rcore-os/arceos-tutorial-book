@@ -10,6 +10,7 @@ edition = "2021"
 editable = true
 [output.html]
 git-repository-url = "https://github.com/rcore-os/arceos-tutorial-book"
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
 # mathjax-support = true
 # [preprocessor.mathjax]
 # renderers = ["html"]
@@ -23,3 +24,8 @@ boost-hierarchy = 1
 boost-paragraph = 1
 expand = true
 heading-split-level = 3
+
+[preprocessor]
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
