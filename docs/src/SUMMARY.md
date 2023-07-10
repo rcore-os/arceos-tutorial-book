@@ -16,7 +16,6 @@
     - [arceos的框架设计](ch02-05.md)
 - [设计实现helloworld unikernel](ch03-00.md)
     - [hellowold的功能需求分析](ch03-01.md)
-    - [helloworld的crates/modules组成](ch03-02.md)
     - [组装helloworld](ch03-03.md)
         - [从单细胞开始](ch03-03-01.md)
         - [细胞的增殖与扩展](ch03-03-02.md)
