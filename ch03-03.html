@@ -1,0 +1,347 @@
+<!DOCTYPE HTML>
+<html lang="cn" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>添加axruntime组件提供更完整的运行环境 - Arceos Tutorial Book</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = null;
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">简明 Arceos Tutorial Book</a></li><li class="chapter-item expanded "><a href="ch01-00.html"><strong aria-hidden="true">1.</strong> 实验环境配置</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch01-01.html"><strong aria-hidden="true">1.1.</strong> OS 环境配置</a></li><li class="chapter-item expanded "><a href="ch01-02.html"><strong aria-hidden="true">1.2.</strong> Rust 开发环境配置</a></li><li class="chapter-item expanded "><a href="ch01-03.html"><strong aria-hidden="true">1.3.</strong> Qemu 模拟器安装</a></li><li class="chapter-item expanded "><a href="ch01-04.html"><strong aria-hidden="true">1.4.</strong> 其他工具安装</a></li><li class="chapter-item expanded "><a href="ch01-05.html"><strong aria-hidden="true">1.5.</strong> 运行Hello World</a></li></ol></li><li class="chapter-item expanded "><a href="ch02-00.html"><strong aria-hidden="true">2.</strong> unikernel基本概念</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch02-01.html"><strong aria-hidden="true">2.1.</strong> 什么是单核？</a></li><li class="chapter-item expanded "><a href="ch02-02.html"><strong aria-hidden="true">2.2.</strong> arceos的组成</a></li><li class="chapter-item expanded "><a href="ch02-03.html"><strong aria-hidden="true">2.3.</strong> 与具体OS⽆关的crates</a></li><li class="chapter-item expanded "><a href="ch02-04.html"><strong aria-hidden="true">2.4.</strong> 与具有OS相关的modules</a></li><li class="chapter-item expanded "><a href="ch02-05.html"><strong aria-hidden="true">2.5.</strong> arceos的框架设计</a></li></ol></li><li class="chapter-item expanded "><a href="ch03-00.html"><strong aria-hidden="true">3.</strong> 设计实现helloworld unikernel</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch03-01.html"><strong aria-hidden="true">3.1.</strong> 依靠axhal组件实现从系统引导到输出</a></li><li class="chapter-item expanded "><a href="ch03-02.html"><strong aria-hidden="true">3.2.</strong> helloworld程序基于axhal组件实现输出</a></li><li class="chapter-item expanded "><a href="ch03-03.html" class="active"><strong aria-hidden="true">3.3.</strong> 添加axruntime组件提供更完整的运行环境</a></li><li class="chapter-item expanded "><a href="ch03-04.html"><strong aria-hidden="true">3.4.</strong> 由开启动态内存分配特性来初识系统相关和无关</a></li><li class="chapter-item expanded "><a href="ch03-05.html"><strong aria-hidden="true">3.5.</strong> 修改命令实现对features的细粒度控制</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Arceos Tutorial Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/rcore-os/arceos-tutorial-book" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="添加-axruntime-组件提供更完整的运行环境"><a class="header" href="#添加-axruntime-组件提供更完整的运行环境">添加 axruntime 组件提供更完整的运行环境</a></h2>
+<p>之所以将 helloworld 的 main 函数和 axhal 组合起来就能实现输出功能，是因为 helloworld 应用程序只用到了 axhal 提供的裸机输出功能， 如果我们需要支持更复杂的应用，axhal 提供的低级的裸机环境肯定不能满足我们的需求， 那么就需要用到 axruntime 这个更强大的组件了。</p>
+<p>axruntime 的主要功能是在进入应用程序的 main 函数之前执行一些初始化操作， 根据所选择的不同 feature 执行相对应的初始化过程。 </p>
+<pre class="mermaid">graph TD
+helloworld --&gt; axruntime --&gt; axhal
+</pre>
+<p>在这一节中我们直接使用 ArceOS 的源代码，将之前修改的代码还原，在 axhal 执行完后不是直接跳转到应用程序的 main 函数， 而是跳转到 axruntime 这个组件的 rust_main 函数，再跳转到 helloworld 的 main 函数。</p>
+<h3 id="动手尝试"><a class="header" href="#动手尝试">动手尝试</a></h3>
+<p>运行命令：</p>
+<pre><code class="language-shell">make ARCH= riscv64 A=apps/helloworld run LOG=debug
+</code></pre>
+<p>运行结果如下图，下面的调试输出信息绿色字体部分可以为我们直观地展示 axruntime 做的一些初始化的工作。</p>
+<p><img src="https://s2.loli.net/2023/07/07/5j7mDSt3oNqMHyd.png" alt="image-20230707100119498" /></p>
+<p>有了这三个组件，我们不仅能运行 helloworld 这样的简单程序，还能运行稍微复杂一些的程序。</p>
+<p>例如，运行 yield 应用程序 (FIFO scheduler): </p>
+<pre><code class="language-shell">make A=apps/task/yield ARCH=riscv64 LOG=info NET=y SMP=1 run
+</code></pre>
+<p>运行结果: </p>
+<p><img src="https://s2.loli.net/2023/07/07/OgBFrv8T1bmjEnG.png" alt="image-20230707143841246" /></p>
+<h3 id="运行过程分析"><a class="header" href="#运行过程分析">运行过程分析</a></h3>
+<p>让我们通过流程图看看 ArceOS 的运行背后到底发生了什么。</p>
+<p>第一步是一些初始化函数的调用过程。</p>
+<h4 id="step-1"><a class="header" href="#step-1">Step 1</a></h4>
+<pre class="mermaid">graph TD;
+    A[axhal::platform::qemu_virt_riscv::boot.rs::_boot] --&gt; init_boot_page_table;
+    A --&gt; init_mmu;
+    A --&gt; P[platform_init];
+    A --&gt; B[axruntime::rust_main];
+    P --&gt; P1[&quot;axhal::mem::clear_bss()&quot;];
+    P --&gt; P2[&quot;axhal::arch::riscv::set_trap_vector_base()&quot;];
+    P --&gt; P3[&quot;axhal::cpu::init_percpu()&quot;];
+    P --&gt; P4[&quot;axhal::platform::qemu_virt_riscv::irq.rs::init()&quot;];
+    P --&gt; P5[&quot;axhal::platform::qemu_virt_riscv::time.rs::init()&quot;];
+    B --&gt; axlog::init;
+    B --&gt; D[init_allocator];
+    B --&gt; remap_kernel_memory;
+    B --&gt; axtask::init_scheduler;
+    B --&gt; axdriver::init_drivers;
+    B --&gt; Q[axfs::init_filesystems];
+    B --&gt; axnet::init_network;
+    B --&gt; axdisplay::init_display;
+    B --&gt; init_interrupt;
+    B --&gt; mp::start_secondary_cpus;
+    B --&gt; C[main];
+    Q --&gt; Q1[&quot;disk=axfs::dev::Disk::new()&quot;];
+    Q --&gt; Q2[&quot;axfs::root::init_rootfs(disk)&quot;];
+    Q2 --fatfs--&gt; Q21[&quot;main_fs=axfs::fs::fatfs::FatFileSystem::new()&quot;];
+    Q2 --&gt; Q22[&quot;MAIN_FS.init_by(main_fs); MAIN_FS.init()&quot;];
+    Q2 --&gt; Q23[&quot;root_dir = RootDirectory::new(MAIN_FS)&quot;];
+    Q2 --devfs--&gt; Q24[&quot;axfs_devfs::DeviceFileSystem::new()&quot;];
+    Q2 --devfs--&gt; Q25[&quot;devfs.add(null, zero, bar)&quot;];
+    Q2 --&gt;Q26[&quot;root_dir.mount(devfs)&quot;];
+    Q2 --&gt;Q27[&quot;init ROOT_DIR, CURRENT_DIR&quot;];
+    D --&gt; E[&quot;In free memory_regions: axalloc::global_init&quot;];
+    D --&gt; F[&quot;In free memory_regions:  axalloc::global_add_memory&quot;];
+    E --&gt; G[axalloc::GLOBAL_ALLOCATOR.init];
+    F --&gt; H[axalloc::GLOBAL_ALLOCATOR.add_memory];
+    G --&gt; I[&quot;PAGE: self.palloc.lock().init&quot;];
+    G --&gt; J[&quot;BYTE: self.balloc.lock().init&quot;];
+    H --&gt; K[&quot;BYTE: self.balloc.lock().add_memory&quot;];
+    I --&gt; M[&quot;allocator::bitmap::BitmapPageAllocator::init()&quot;];
+    J --&gt;L[&quot;allocator::slab::SlabByteAllocator::init() self.inner = unsafe { Some(Heap::new(start, size))&quot;];
+    K --&gt; N[&quot;allocator::slab::SlabByteAllocator::add_memory:  self.inner_mut().add_memory(start, size);&quot;];
+
+
+</pre>
+<p>下面是 helloworld 程序的运行流程，实际上 helloworld 程序最后调用的是 axhal 封装好的输出功能，本质还是依靠 sbi 进行输出。</p>
+<h4 id="step-2"><a class="header" href="#step-2">Step 2</a></h4>
+<pre class="mermaid">graph TD;
+    A[main] --&gt; B[&quot;libax::println!(Hello, world!)&quot;];
+    B --&gt; C[libax:io::__print_impl];
+    C --&gt; D[INLINE_LOCK=Mutex::new];
+    C --&gt; _guard=INLINE_LOCK.lock;
+    C --&gt; E[&quot;stdout().write_fmt(args)&quot;];
+</pre>
+<h5 id="step-21"><a class="header" href="#step-21">step 2.1</a></h5>
+<pre class="mermaid">graph TD;
+    T[&quot;stdout()&quot;] --&gt; A[&quot;libax::io::stdio.rs::stdout()&quot;];
+    A --&gt; B[&quot;INSTANCE: Mutex&lt;StdoutRaw&gt; = Mutex::new(StdoutRaw)&quot;];
+    A --&gt; C[&quot;return Stdout { inner: &amp;INSTANCE }&quot;];
+</pre>
+<h5 id="step-22"><a class="header" href="#step-22">step 2.2</a></h5>
+<pre class="mermaid">graph TD;
+    T[&quot;stdout().write_fmt(args)&quot;] --&gt; A[&quot;Stdout::write&quot;];
+    A --&gt; B[&quot;self.inner.lock().write(buf)&quot;];
+    B --&gt; C[&quot;StdoutRaw::write&quot;];
+    C --&gt; D[&quot;axhal::console::write_bytes(buf);&quot;];
+    C --&gt; E[&quot;Ok(buf.len())&quot;];
+    D --&gt; F[&quot;putchar&quot;];
+    F --&gt; G[&quot;axhal::platform::qemu_virt_riscv::console::putchar&quot;];
+    G --&gt; H[&quot;sbi_rt::legacy::console_putchar&quot;];
+</pre>
+<h3 id="总结"><a class="header" href="#总结">总结</a></h3>
+<p>至此，我们已经完成了从 axhal 到 axruntime 到 helloworld 的组合了，并且将 helloworld unikernel 运行了起来。</p>
+<h3 id="附录"><a class="header" href="#附录">附录</a></h3>
+<ul>
+<li>
+<p><code>axruntime</code> 模块简介：</p>
+</li>
+<li>
+<p>模块源码位置：<a href="(https://github.com/rcore-os/arceos/tree/main/modules/axruntime)">modules/axruntime</a></p>
+<ul>
+<li>功能描述：在进入应用程序的 main 函数之前执行一些初始化操作， 根据所选择的 feature 执行相对应的初始化过程。</li>
+</ul>
+</li>
+<li>
+<p>流程图来源：</p>
+<ul>
+<li>
+<p>step 1 <a href="https://github.com/rcore-os/arceos/blob/main/doc/init.md">init</a></p>
+</li>
+<li>
+<p>step 2 <a href="https://github.com/rcore-os/arceos/blob/main/doc/apps_helloworld.md">helloworld</a></p>
+</li>
+</ul>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="ch03-02.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next" href="ch03-04.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="ch03-02.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next" href="ch03-04.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+        <script src="ace.js"></script>
+        <script src="editor.js"></script>
+        <script src="mode-rust.js"></script>
+        <script src="theme-dawn.js"></script>
+        <script src="theme-tomorrow_night.js"></script>
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="mermaid.min.js"></script>
+        <script src="mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

@@ -83,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">简明 Arceos Tutorial Book</a></li><li class="chapter-item expanded "><a href="ch01-00.html"><strong aria-hidden="true">1.</strong> 实验环境配置</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch01-01.html"><strong aria-hidden="true">1.1.</strong> OS 环境配置</a></li><li class="chapter-item expanded "><a href="ch01-02.html" class="active"><strong aria-hidden="true">1.2.</strong> Rust 开发环境配置</a></li><li class="chapter-item expanded "><a href="ch01-03.html"><strong aria-hidden="true">1.3.</strong> Qemu 模拟器安装</a></li><li class="chapter-item expanded "><a href="ch01-04.html"><strong aria-hidden="true">1.4.</strong> 其他工具安装</a></li><li class="chapter-item expanded "><a href="ch01-05.html"><strong aria-hidden="true">1.5.</strong> 运行Hello World</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">简明 Arceos Tutorial Book</a></li><li class="chapter-item expanded "><a href="ch01-00.html"><strong aria-hidden="true">1.</strong> 实验环境配置</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch01-01.html"><strong aria-hidden="true">1.1.</strong> OS 环境配置</a></li><li class="chapter-item expanded "><a href="ch01-02.html" class="active"><strong aria-hidden="true">1.2.</strong> Rust 开发环境配置</a></li><li class="chapter-item expanded "><a href="ch01-03.html"><strong aria-hidden="true">1.3.</strong> Qemu 模拟器安装</a></li><li class="chapter-item expanded "><a href="ch01-04.html"><strong aria-hidden="true">1.4.</strong> 其他工具安装</a></li><li class="chapter-item expanded "><a href="ch01-05.html"><strong aria-hidden="true">1.5.</strong> 运行Hello World</a></li></ol></li><li class="chapter-item expanded "><a href="ch02-00.html"><strong aria-hidden="true">2.</strong> unikernel基本概念</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch02-01.html"><strong aria-hidden="true">2.1.</strong> 什么是单核？</a></li><li class="chapter-item expanded "><a href="ch02-02.html"><strong aria-hidden="true">2.2.</strong> arceos的组成</a></li><li class="chapter-item expanded "><a href="ch02-03.html"><strong aria-hidden="true">2.3.</strong> 与具体OS⽆关的crates</a></li><li class="chapter-item expanded "><a href="ch02-04.html"><strong aria-hidden="true">2.4.</strong> 与具有OS相关的modules</a></li><li class="chapter-item expanded "><a href="ch02-05.html"><strong aria-hidden="true">2.5.</strong> arceos的框架设计</a></li></ol></li><li class="chapter-item expanded "><a href="ch03-00.html"><strong aria-hidden="true">3.</strong> 设计实现helloworld unikernel</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch03-01.html"><strong aria-hidden="true">3.1.</strong> 依靠axhal组件实现从系统引导到输出</a></li><li class="chapter-item expanded "><a href="ch03-02.html"><strong aria-hidden="true">3.2.</strong> helloworld程序基于axhal组件实现输出</a></li><li class="chapter-item expanded "><a href="ch03-03.html"><strong aria-hidden="true">3.3.</strong> 添加axruntime组件提供更完整的运行环境</a></li><li class="chapter-item expanded "><a href="ch03-04.html"><strong aria-hidden="true">3.4.</strong> 由开启动态内存分配特性来初识系统相关和无关</a></li><li class="chapter-item expanded "><a href="ch03-05.html"><strong aria-hidden="true">3.5.</strong> 修改命令实现对features的细粒度控制</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -169,7 +169,76 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h2 id="第二节"><a class="header" href="#第二节">第二节</a></h2>
+                        <h2 id="rust-开发环境配置"><a class="header" href="#rust-开发环境配置">Rust 开发环境配置</a></h2>
+<p>首先安装 Rust 版本管理器 rustup 和 Rust 包管理器 cargo，这里我们用官方的安装脚本来安装：</p>
+<p><code>curl https://sh.rustup.rs -sSf | sh</code></p>
+<p>如果通过官方的脚本下载失败了，可以在浏览器的地址栏中输入 <a href="https://sh.rustup.rs/">https://sh.rustup.rs</a> 来下载脚本，在本地运行即可。</p>
+<p>如果官方的脚本在运行时出现了网络速度较慢的问题，可选地可以通过修改 rustup 的镜像地址（修改为中国科学技术大学的镜像服务器）来加速：</p>
+<pre><code class="language-bash">export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
+export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
+curl https://sh.rustup.rs -sSf | sh
+</code></pre>
+<p>或者使用 tuna 源来加速 <a href="https://mirrors.tuna.tsinghua.edu.cn/help/rustup/">参见 rustup 帮助</a>：</p>
+<pre><code class="language-bash">export RUSTUP_DIST_SERVER=https://mirrors.tuna.edu.cn/rustup
+export RUSTUP_UPDATE_ROOT=https://mirrors.tuna.edu.cn/rustup/rustup
+curl https://sh.rustup.rs -sSf | sh
+</code></pre>
+<p>或者也可以通过在运行前设置命令行中的科学上网代理来实现：</p>
+<pre><code class="language-bash"># e.g. Shadowsocks 代理，请根据自身配置灵活调整下面的链接
+export https_proxy=http://127.0.0.1:1080
+export http_proxy=http://127.0.0.1:1080
+export ftp_proxy=http://127.0.0.1:1080
+</code></pre>
+<p>安装完成后，我们可以重新打开一个终端来让之前设置的环境变量生效。我们也可以手动将环境变量设置应用到当前终端，只需要输入以下命令：</p>
+<p><code>source $HOME/.cargo/env</code></p>
+<p>接下来，我们可以确认一下我们正确安装了 Rust 工具链：</p>
+<p><code>rustc --version</code></p>
+<p>可以看到当前安装的工具链的版本。</p>
+<p><code>rustc 1.70.0 (90c541806 2023-05-31)</code></p>
+<blockquote>
+<p><font color=red><strong>警告⚠️</strong></font></p>
+<p>目前适用于操作系统实验开发的 rustc 编译器的版本为 1.73.0，你可以选择更新版本的 rustc 编译器。但注意<strong>只能用 rustc 的 nightly 类型的版本</strong>。</p>
+</blockquote>
+<p>可通过如下命令安装 rustc 的 nightly 版本，并把该版本设置为 rustc 的默认版本。</p>
+<pre><code class="language-bash">rustup install nightly
+rustup default nightly
+</code></pre>
+<p>再次确认一下我们安装了正确的 rustc  版本：</p>
+<pre><code class="language-bash">sunny@SunnyDream:~$ rustc --version
+rustc 1.73.0-nightly (33a2c2487 2023-07-12)
+</code></pre>
+<p>我们最好把软件包管理器 cargo 所用的软件包镜像地址 crates.io 也换成中国科学技术大学的镜像服务器来加速三方库的下载。我们打开（如果没有就新建） <code>~/.cargo/config</code> 文件，并把内容修改为：</p>
+<pre><code>[source.crates-io]
+registry = &quot;https://github.com/rust-lang/crates.io-index&quot;
+replace-with = 'ustc'
+[source.ustc]
+registry = &quot;git://mirrors.ustc.edu.cn/crates.io-index&quot;
+</code></pre>
+<p>同样，也可以使用 tuna 源 <a href="https://mirrors.tuna.tsinghua.edu.cn/help/crates.io-index.git/">参见 crates.io 帮助</a>：</p>
+<pre><code>[source.crates-io]
+replace-with = 'tuna'
+
+[source.tuna]
+registry = &quot;https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git&quot;
+</code></pre>
+<p>接下来安装一些Rust相关的软件包</p>
+<pre><code class="language-bash">rustup target add riscv64gc-unknown-none-elf
+rustup component add llvm-tools-preview
+rustup component add rust-src
+</code></pre>
+<blockquote>
+<p><font color=red><strong>警告⚠️</strong></font></p>
+<p>如果你更换了另外一个 rustc 编译器（必须是 nightly 版的），<strong>需要重新安装上述 rustc 所需软件包</strong>。ArceOS 仓库中的 <code>Makefile</code> 包含了这些工具的安装，如果你使用 <code>make run</code> 也可以不手动安装。</p>
+</blockquote>
+<p>至于 Rust 开发环境，推荐 JetBrains Clion + Rust插件 或者 Visual Studio Code 搭配 rust-analyzer 和 RISC-V Support 插件。</p>
+<blockquote>
+<p><font color=blue><strong>注解👉</strong></font></p>
+<p>JetBrains Clion 付费商业软件，但对于学生和教师，只要在 JetBrains 网站注册账号，可以享受一定期限（半年左右）的免费使用的福利。</p>
+<ul>
+<li>Visual Studio Code 是开源软件，不用付费就可使用。</li>
+<li>当然，采用 VIM，Emacs 等传统的编辑器也是没有问题的。</li>
+</ul>
+</blockquote>
 
                     </main>
 
@@ -222,6 +291,8 @@
         <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="mermaid.min.js"></script>
+        <script src="mermaid-init.js"></script>
 
 
     </div>

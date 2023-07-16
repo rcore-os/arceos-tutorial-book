@@ -84,7 +84,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">简明 Arceos Tutorial Book</a></li><li class="chapter-item expanded "><a href="ch01-00.html"><strong aria-hidden="true">1.</strong> 实验环境配置</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch01-01.html"><strong aria-hidden="true">1.1.</strong> OS 环境配置</a></li><li class="chapter-item expanded "><a href="ch01-02.html"><strong aria-hidden="true">1.2.</strong> Rust 开发环境配置</a></li><li class="chapter-item expanded "><a href="ch01-03.html"><strong aria-hidden="true">1.3.</strong> Qemu 模拟器安装</a></li><li class="chapter-item expanded "><a href="ch01-04.html"><strong aria-hidden="true">1.4.</strong> 其他工具安装</a></li><li class="chapter-item expanded "><a href="ch01-05.html"><strong aria-hidden="true">1.5.</strong> 运行Hello World</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">简明 Arceos Tutorial Book</a></li><li class="chapter-item expanded "><a href="ch01-00.html"><strong aria-hidden="true">1.</strong> 实验环境配置</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch01-01.html"><strong aria-hidden="true">1.1.</strong> OS 环境配置</a></li><li class="chapter-item expanded "><a href="ch01-02.html"><strong aria-hidden="true">1.2.</strong> Rust 开发环境配置</a></li><li class="chapter-item expanded "><a href="ch01-03.html"><strong aria-hidden="true">1.3.</strong> Qemu 模拟器安装</a></li><li class="chapter-item expanded "><a href="ch01-04.html"><strong aria-hidden="true">1.4.</strong> 其他工具安装</a></li><li class="chapter-item expanded "><a href="ch01-05.html"><strong aria-hidden="true">1.5.</strong> 运行Hello World</a></li></ol></li><li class="chapter-item expanded "><a href="ch02-00.html"><strong aria-hidden="true">2.</strong> unikernel基本概念</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch02-01.html"><strong aria-hidden="true">2.1.</strong> 什么是单核？</a></li><li class="chapter-item expanded "><a href="ch02-02.html"><strong aria-hidden="true">2.2.</strong> arceos的组成</a></li><li class="chapter-item expanded "><a href="ch02-03.html"><strong aria-hidden="true">2.3.</strong> 与具体OS⽆关的crates</a></li><li class="chapter-item expanded "><a href="ch02-04.html"><strong aria-hidden="true">2.4.</strong> 与具有OS相关的modules</a></li><li class="chapter-item expanded "><a href="ch02-05.html"><strong aria-hidden="true">2.5.</strong> arceos的框架设计</a></li></ol></li><li class="chapter-item expanded "><a href="ch03-00.html"><strong aria-hidden="true">3.</strong> 设计实现helloworld unikernel</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch03-01.html"><strong aria-hidden="true">3.1.</strong> 依靠axhal组件实现从系统引导到输出</a></li><li class="chapter-item expanded "><a href="ch03-02.html"><strong aria-hidden="true">3.2.</strong> helloworld程序基于axhal组件实现输出</a></li><li class="chapter-item expanded "><a href="ch03-03.html"><strong aria-hidden="true">3.3.</strong> 添加axruntime组件提供更完整的运行环境</a></li><li class="chapter-item expanded "><a href="ch03-04.html"><strong aria-hidden="true">3.4.</strong> 由开启动态内存分配特性来初识系统相关和无关</a></li><li class="chapter-item expanded "><a href="ch03-05.html"><strong aria-hidden="true">3.5.</strong> 修改命令实现对features的细粒度控制</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -175,12 +175,552 @@
 <p>本教程假设读者了解操作系统基本概念和原理，具有常用的 Linux 系统使用经验，并且会使用 Rust 语言编写简单程序。
 如果读者不熟悉操作系统和 Rust 语言，希望以自底向上方法从零构建操作系统，[rCore Tutorial Boook v3] 可能是更好的选择。</p>
 <p>如果你准备好了，让我们开始吧！</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="第一章"><a class="header" href="#第一章">第一章</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="第一节"><a class="header" href="#第一节">第一节</a></h2>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="第二节"><a class="header" href="#第二节">第二节</a></h2>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="第三节"><a class="header" href="#第三节">第三节</a></h2>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="第四节"><a class="header" href="#第四节">第四节</a></h2>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="第五节"><a class="header" href="#第五节">第五节</a></h2>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="实验环境配置"><a class="header" href="#实验环境配置">实验环境配置</a></h1>
+<p>本章我们将完成环境配置并成功运行 helloworld unikernel。整个流程分为以下几个部分：</p>
+<ul>
+<li><a href="https://cg1937.github.io/arceos-tutorial-book/ch01-01.html">OS 环境配置</a></li>
+<li><a href="https://cg1937.github.io/arceos-tutorial-book/ch01-02.html">Rust 开发环境配置</a></li>
+<li><a href="https://cg1937.github.io/arceos-tutorial-book/ch01-03.html">QEMU 模拟器安装</a></li>
+<li><a href="https://cg1937.github.io/arceos-tutorial-book/ch01-04.html">其他工具安装</a></li>
+<li><a href="https://cg1937.github.io/arceos-tutorial-book/ch01-05.html">运行 helloworld unikernel</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="os-环境配置"><a class="header" href="#os-环境配置">OS 环境配置</a></h2>
+<p>目前实验内容可支持在 <a href="https://cdimage.ubuntu.com/releases/">Ubuntu操作系统</a> 上进行操作。</p>
+<p>对于 Windows10/11 的用户可以通过系统内置的 WSL2 虚拟机（请不要使用 WSL1）来安装 Ubuntu 22.04，步骤如下：</p>
+<ul>
+<li>
+<p>升级 Windows 10/11 到最新版（Windows 10 版本 18917 或以后的内部版本）。注意，如果不是 Windows 10/11 专业版，可能需要手动更新，在微软官网上下载。升级之后， 可以在 PowerShell 中输入 <code>winver</code> 命令来查看内部版本号。</p>
+</li>
+<li>
+<p>「Windows 设置 &gt; 更新和安全 &gt; Windows 预览体验计划」处选择加入 “Dev 开发者模式”。</p>
+</li>
+<li>
+<p>以管理员身份打开 PowerShell 终端并输入以下命令：</p>
+<pre><code class="language-powershell"># 启用 Windows 功能：“适用于 Linux 的 Windows 子系统”
+&gt;&gt; dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+
+# 启用 Windows 功能：“已安装的系统虚拟机平台”
+&gt;&gt; dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+
+# &lt;Distro&gt; 改为对应从微软应用商店安装的 Linux 版本名，比如：`wsl --set-version Ubuntu 2`
+# 如果你没有提前从微软应用商店安装任何 Linux 版本，请跳过此步骤
+&gt;&gt; wsl --set-version &lt;Distro&gt; 2
+
+# 设置默认为 WSL 2，如果 Windows 版本不够，这条命令会出错
+&gt;&gt; wsl --set-default-version 2
+
+# 启用运行 WSL 并安装 Linux 的 Ubuntu 发行版所需的功能，根据向导设置用户名和密码
+&gt;&gt; wsl --install
+</code></pre>
+</li>
+</ul>
+<blockquote>
+<p><font color=blue><strong>注解👉</strong></font></p>
+<p>由于时间问题我们主要在 Ubuntu22.04  on x86-64 上进行了测试，后面的配置也是基于此环境进行。你也可以在其他 Linux 发行版上进行实验，基本上不会出现太大的问题。如果遇到了问题的话，请在本节的讨论区中留言，我们会尽量帮助解决。</p>
+</blockquote>
+<p>参考：<a href="https://docs.microsoft.com/zh-cn/windows/wsl/install-win10#step-4---download-the-linux-kernel-update-package">使用 WSL 在 Windows 上安装 Linux</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="rust-开发环境配置"><a class="header" href="#rust-开发环境配置">Rust 开发环境配置</a></h2>
+<p>首先安装 Rust 版本管理器 rustup 和 Rust 包管理器 cargo，这里我们用官方的安装脚本来安装：</p>
+<p><code>curl https://sh.rustup.rs -sSf | sh</code></p>
+<p>如果通过官方的脚本下载失败了，可以在浏览器的地址栏中输入 <a href="https://sh.rustup.rs/">https://sh.rustup.rs</a> 来下载脚本，在本地运行即可。</p>
+<p>如果官方的脚本在运行时出现了网络速度较慢的问题，可选地可以通过修改 rustup 的镜像地址（修改为中国科学技术大学的镜像服务器）来加速：</p>
+<pre><code class="language-bash">export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
+export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
+curl https://sh.rustup.rs -sSf | sh
+</code></pre>
+<p>或者使用 tuna 源来加速 <a href="https://mirrors.tuna.tsinghua.edu.cn/help/rustup/">参见 rustup 帮助</a>：</p>
+<pre><code class="language-bash">export RUSTUP_DIST_SERVER=https://mirrors.tuna.edu.cn/rustup
+export RUSTUP_UPDATE_ROOT=https://mirrors.tuna.edu.cn/rustup/rustup
+curl https://sh.rustup.rs -sSf | sh
+</code></pre>
+<p>或者也可以通过在运行前设置命令行中的科学上网代理来实现：</p>
+<pre><code class="language-bash"># e.g. Shadowsocks 代理，请根据自身配置灵活调整下面的链接
+export https_proxy=http://127.0.0.1:1080
+export http_proxy=http://127.0.0.1:1080
+export ftp_proxy=http://127.0.0.1:1080
+</code></pre>
+<p>安装完成后，我们可以重新打开一个终端来让之前设置的环境变量生效。我们也可以手动将环境变量设置应用到当前终端，只需要输入以下命令：</p>
+<p><code>source $HOME/.cargo/env</code></p>
+<p>接下来，我们可以确认一下我们正确安装了 Rust 工具链：</p>
+<p><code>rustc --version</code></p>
+<p>可以看到当前安装的工具链的版本。</p>
+<p><code>rustc 1.70.0 (90c541806 2023-05-31)</code></p>
+<blockquote>
+<p><font color=red><strong>警告⚠️</strong></font></p>
+<p>目前适用于操作系统实验开发的 rustc 编译器的版本为 1.73.0，你可以选择更新版本的 rustc 编译器。但注意<strong>只能用 rustc 的 nightly 类型的版本</strong>。</p>
+</blockquote>
+<p>可通过如下命令安装 rustc 的 nightly 版本，并把该版本设置为 rustc 的默认版本。</p>
+<pre><code class="language-bash">rustup install nightly
+rustup default nightly
+</code></pre>
+<p>再次确认一下我们安装了正确的 rustc  版本：</p>
+<pre><code class="language-bash">sunny@SunnyDream:~$ rustc --version
+rustc 1.73.0-nightly (33a2c2487 2023-07-12)
+</code></pre>
+<p>我们最好把软件包管理器 cargo 所用的软件包镜像地址 crates.io 也换成中国科学技术大学的镜像服务器来加速三方库的下载。我们打开（如果没有就新建） <code>~/.cargo/config</code> 文件，并把内容修改为：</p>
+<pre><code>[source.crates-io]
+registry = &quot;https://github.com/rust-lang/crates.io-index&quot;
+replace-with = 'ustc'
+[source.ustc]
+registry = &quot;git://mirrors.ustc.edu.cn/crates.io-index&quot;
+</code></pre>
+<p>同样，也可以使用 tuna 源 <a href="https://mirrors.tuna.tsinghua.edu.cn/help/crates.io-index.git/">参见 crates.io 帮助</a>：</p>
+<pre><code>[source.crates-io]
+replace-with = 'tuna'
+
+[source.tuna]
+registry = &quot;https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git&quot;
+</code></pre>
+<p>接下来安装一些Rust相关的软件包</p>
+<pre><code class="language-bash">rustup target add riscv64gc-unknown-none-elf
+rustup component add llvm-tools-preview
+rustup component add rust-src
+</code></pre>
+<blockquote>
+<p><font color=red><strong>警告⚠️</strong></font></p>
+<p>如果你更换了另外一个 rustc 编译器（必须是 nightly 版的），<strong>需要重新安装上述 rustc 所需软件包</strong>。ArceOS 仓库中的 <code>Makefile</code> 包含了这些工具的安装，如果你使用 <code>make run</code> 也可以不手动安装。</p>
+</blockquote>
+<p>至于 Rust 开发环境，推荐 JetBrains Clion + Rust插件 或者 Visual Studio Code 搭配 rust-analyzer 和 RISC-V Support 插件。</p>
+<blockquote>
+<p><font color=blue><strong>注解👉</strong></font></p>
+<p>JetBrains Clion 付费商业软件，但对于学生和教师，只要在 JetBrains 网站注册账号，可以享受一定期限（半年左右）的免费使用的福利。</p>
+<ul>
+<li>Visual Studio Code 是开源软件，不用付费就可使用。</li>
+<li>当然，采用 VIM，Emacs 等传统的编辑器也是没有问题的。</li>
+</ul>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="qemu-模拟器安装"><a class="header" href="#qemu-模拟器安装">QEMU 模拟器安装</a></h2>
+<p>我们需要使用 QEMU 7.0 版本进行实验，低版本的 QEMU 可能导致框架代码不能正常运行。而很多 Linux 发行版的软件包管理器默认软件源中的 QEMU 版本过低，因此我们需要从源码手动编译安装 QEMU 模拟器软件。下面以 Ubuntu 22.04 上的安装流程为例进行说明：</p>
+<p>首先我们安装依赖包，获取 QEMU 源代码并手动编译：</p>
+<pre><code class="language-bash"># 安装编译所需的依赖包
+sudo apt install autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev \
+              gawk build-essential bison flex texinfo gperf libtool patchutils bc \
+              zlib1g-dev libexpat-dev pkg-config  libglib2.0-dev libpixman-1-dev libsdl2-dev \
+              git tmux python3 python3-pip ninja-build
+# 下载源码包
+# 如果下载速度过慢可以使用我们提供的百度网盘链接：https://pan.baidu.com/s/1dykndFzY73nqkPL2QXs32Q
+# 提取码：jimc
+wget https://download.qemu.org/qemu-7.0.0.tar.xz
+# 解压
+tar xvJf qemu-7.0.0.tar.xz
+# 编译安装并配置 RISC-V 支持
+cd qemu-7.0.0
+./configure --target-list=riscv64-softmmu,riscv64-linux-user  # 如果要支持图形界面，可添加 &quot; --enable-sdl&quot; 参数
+make -j$(nproc)
+</code></pre>
+<blockquote>
+<p><font color=blue><strong>注解👉</strong></font>  </p>
+<p>注意，上面的依赖包可能并不完全，比如在 Ubuntu 18.04 上：</p>
+<ul>
+<li>出现 <code>ERROR: pkg-config binary 'pkg-config' not found</code> 时，可以安装 <code>pkg-config</code> 包；</li>
+<li>出现 <code>ERROR: glib-2.48 gthread-2.0 is required to compile QEMU</code> 时，可以安装 <code>libglib2.0-dev</code> 包；</li>
+<li>出现 <code>ERROR: pixman &gt;= 0.21.8 not present</code> 时，可以安装 <code>libpixman-1-dev</code> 包。</li>
+</ul>
+</blockquote>
+<p>另外一些 Linux 发行版编译 QEMU 的依赖包可以从 <a href="https://risc-v-getting-started-guide.readthedocs.io/en/latest/linux-qemu.html#prerequisites">这里</a> 找到。</p>
+<p>之后我们可以在同目录下 <code>sudo make install</code> 将 QEMU 安装到 <code>/usr/local/bin</code> 目录下，但这样经常会引起冲突。个人来说更习惯的做法是，编辑 <code>~/.bashrc</code> 文件（如果使用的是默认的 <code>bash</code> 终端），在文件的末尾加入几行：</p>
+<pre><code class="language-bash"># 请注意，/path/to是qemu-7.0.0 的父目录，应调整为实际的安装位置
+export PATH=$PATH:/path/to/qemu-7.0.0/build
+</code></pre>
+<p>随后即可在当前终端 <code>source ~/.bashrc</code> 更新系统路径，或者直接重启一个新的终端。</p>
+<p>此时我们可以确认 QEMU 的版本：</p>
+<pre><code class="language-bash">qemu-system-riscv64 --version
+qemu-riscv64 --version
+</code></pre>
+<blockquote>
+<p><font color=red><strong>警告⚠️</strong></font></p>
+<p>请尽量不要安装 <code>qemu-kvm</code> ，这可能会导致我们的框架无法正常运行。另外，我们仅在 Qemu 7.0.0 版本上进行了测试，请尽量不要切换到其他版本。</p>
+</blockquote>
+<h3 id="q--a"><a class="header" href="#q--a">Q &amp; A</a></h3>
+<p>当安装编译所需的依赖包出现Package xxx is not available, but is referred to by another package 错误时，可以尝试更新系统软件源，执行如下命令：</p>
+<pre><code class="language-bash">sudo apt-get update
+sudo apt-get upgrade
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="其他工具安装"><a class="header" href="#其他工具安装">其他工具安装</a></h2>
+<p>本节主要介绍 arceos 编译所需的依赖工具的安装。</p>
+<p>为了使用 objdump、objcopy 工具，我们首先需要安装名为 cargo-binutils 的命令行工具集：</p>
+<pre><code class="language-bash">cargo install cargo-binutils
+</code></pre>
+<p>为了编译运行 C 应用程序，安装 <code>libclang-dev</code>：</p>
+<pre><code class="language-bash">sudo apt install libclang-dev
+</code></pre>
+<p>下载并安装 <code>cross-musl-based</code>工具链：</p>
+<pre><code class="language-bash"># download
+wget https://musl.cc/aarch64-linux-musl-cross.tgz
+wget https://musl.cc/riscv64-linux-musl-cross.tgz
+wget https://musl.cc/x86_64-linux-musl-cross.tgz
+# install
+tar zxf aarch64-linux-musl-cross.tgz
+tar zxf riscv64-linux-musl-cross.tgz
+tar zxf x86_64-linux-musl-cross.tgz
+# exec below command in bash OR add below info in ~/.bashrc
+export PATH=`pwd`/x86_64-linux-musl-cross/bin:`pwd`/aarch64-linux-musl-cross/bin:`pwd`/riscv64-linux-musl-cross/bin:$PATH
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="运行-helloworld-unikernel"><a class="header" href="#运行-helloworld-unikernel">运行 helloworld unikernel</a></h2>
+<p>本节介绍如何在 QEMU 模拟器上运行 helloworld unikernel。</p>
+<ol>
+<li>
+<p>执行如下命令，获取 ArceOS 源码包：</p>
+<p><code>git clone https://github.com/rcore-os/arceos.git</code></p>
+</li>
+<li>
+<p>进入arceos目录，执行如下命令，编译并运行 helloworld unikernel：</p>
+<p><code>make ARCH=riscv64 A=apps/helloworld run</code></p>
+<p>其中，</p>
+<p>ARCH 指定 CPU 体系架构，目前支持选项：<code>riscv64</code>, <code>aarch64</code>，<code>x86_64</code>。</p>
+<p>A 指定用户程序的相对路径。</p>
+</li>
+</ol>
+<p><img src="./img/01_05_01.png" alt="image-20230712163420462" /></p>
+<p>到这里，恭喜你完成了实验环境的配置，可以开始阅读教程的正文部分了！</p>
+<h3 id="q--a-1"><a class="header" href="#q--a-1">Q &amp; A</a></h3>
+<p>当代码跑不起来的时候，可以尝试：</p>
+<ul>
+<li>分支是否与 原版仓库（而非 fork 出来的仓库）的对应分支同步。如不同步的话考虑通过 <code>git pull</code> 进行更新。注：这是因为 Rust 的版本更迭较快，如不及时更新的话曾经能正常运行的代码也会无法运行。</li>
+<li>项目根目录下的 <code>rust-toolchain</code> 非常重要，它代表整个项目采用的 Rust 工具链版本。请务必保持其与原版仓库对应分支一致。</li>
+<li>通过 <code>make clean</code> 或者 <code>cargo clean</code> 删除构建产物，并重新 <code>make run</code> 。注：出现这样的问题通常说明框架的构建脚本存在 bug，可以提 issue。</li>
+</ul>
+<p>如果怀疑遇到了网络问题，可以检查：</p>
+<ul>
+<li>请按照本章说明进行 Rust 安装和 crates.io 镜像配置。通常情况下能够解决 Rust 工具链更新和下载已发布到 crates.io 上库的问题。</li>
+</ul>
+<!--
+- 如果发现在试图从 github 上下载下述几个库的时候卡死，可以修改 `arceos` 目录下的 `Cargo.toml` 替换为 gitee 上的镜像。例如，将：
+
+  > ```toml
+  > riscv = { git = "https://github.com/rcore-os/riscv", features = ["inline-asm"] }
+  > ```
+  
+  替换为：
+  
+  > ```toml
+  > riscv = { git = "https://gitee.com/rcore-os/riscv", features = ["inline-asm"] }
+  > ```
+--><div style="break-before: page; page-break-before: always;"></div><h1 id="unikernel基本概念"><a class="header" href="#unikernel基本概念">unikernel基本概念</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="什么是单核"><a class="header" href="#什么是单核">什么是单核？</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="arceos的组成"><a class="header" href="#arceos的组成">arceos的组成</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="与具体os关的crates"><a class="header" href="#与具体os关的crates">与具体OS⽆关的crates</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="与具有os相关的modules"><a class="header" href="#与具有os相关的modules">与具有OS相关的modules</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="arceos的框架设计"><a class="header" href="#arceos的框架设计">arceos的框架设计</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="设计实现-helloworld-unikernel"><a class="header" href="#设计实现-helloworld-unikernel">设计实现 helloworld unikernel</a></h2>
+<p>通常，我们在学习一门新的编程语言时，接触的第一个示例程序就是 helloworld，当一名新的程序员清除完一切障碍顺利抵达 helloworld 时，他的内心体验到的不仅仅是一种成功的喜悦，更重要的是，他正在亲身经历一个跨越历史的时刻。各位，你还记得你第一次写的 helloworld 吗？</p>
+<p>这一章，我们将沿袭前人之路，以 helloworld 来开启沟通 ArceOS 世界的历程。我们将通过从零开始设计实现一个 helloworld unikernel，来直接感受 ArceOS 的理念、特性。</p>
+<h3 id="1-回顾-arceos"><a class="header" href="#1-回顾-arceos">1 回顾 ArceOS</a></h3>
+<p>ArceOS 是一个实验性的，基于 unikernel 的组件化操作系统，具有以下特性：</p>
+<ol>
+<li>组件化：以组件粒度组装适应各种应用需求的操作系统。</li>
+<li>以应用为中心(unikernel)：面向应用，依照依赖链，选出最小的必要组件集合，构造操作系统。</li>
+<li>组件区分系统相关和系统无关：识别具有通用功能的组件，可以为其它操作系统所复用。</li>
+<li>利用 Rust 机制：以 crate 对应组件，trait 对应接口，dependencies+features 的方式对组件进行组织。</li>
+</ol>
+<h3 id="2--helloworld-unikernel-功能需求分析"><a class="header" href="#2--helloworld-unikernel-功能需求分析">2  helloworld unikernel 功能需求分析</a></h3>
+<p>首先，我们一起来看一下即将实现的 helloworld unikernel 到底是什么？与我们往常学习编程语言的 helloworld 示例程序有什么区别？</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+int main()
+{
+	printf(&quot;hello world!&quot;);
+    return 0;
+}
+</code></pre>
+<p><strong>以这个 C 语言编写的 helloworld 程序为例，可以发现</strong>，无论是这个 helloworld 示例程序，还是现在的 helloworld unikernel，核心功能都是向屏幕打印 ”hello world“ 字符串。</p>
+<p>不同的是，在绝大多数情况下（不考虑嵌入式系统），如果我们尝试把c语言程序编译好的二进制程序直接放在一个裸机环境上是不能够运行的，因为缺少它依赖的各种服务和资源，缺乏和硬件交互的能力。也就是说，如果要在一台裸机上部署这个应用，至少需要安装一个操作系统，然后才能令这个 helloworld 成功运行。</p>
+<p>而对于 helloworld unikernel 来讲，它是一个 helloworld 应用+最小支撑运行环境的集合，在一台裸机上进行烧录，就可以执行 helloworld 程序。</p>
+<p>总结一下，helloworld unikernel 是一个能够运行 helloworld 程序的 unikernel image。再进一步，结合 unikernel 的定义来讲，helloworld unikernel 是通过打包必要的 ArceOS 组件，专门用来支撑 helloworld 程序运行的单地址空间机器镜像。具备如下功能：</p>
+<ol>
+<li>首先，作为 unikernel，或称为 libOS，能够引导本系统运行（在裸机上搭建 helloworld 应用所需的必要运行环境）；</li>
+<li>其次，具备 helloworld 的基本功能，能够输出如下信息到屏幕：</li>
+</ol>
+<p><code>Hello, world！I am arceOS！</code></p>
+<p>接下来，我们将结合 ArceOS 的特性，从简单到复杂，将 helloworld unikernel 功能逐步分解，从单个组件到三个组件，然后引入分层和 feature 的概念，最终向用户呈现一个简洁、规范的实现过程。</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="依靠-axhal-组件实现从系统引导到输出"><a class="header" href="#依靠-axhal-组件实现从系统引导到输出">依靠 axhal 组件实现从系统引导到输出</a></h2>
+<p>在这一节，我们尝试单纯借助 axhal 组件实现 helloworld unikernel 从系统引导到输出字符的功能，为此需要对默认的 axhal 代码做一点修改。</p>
+<h3 id="初探-axhal-组件"><a class="header" href="#初探-axhal-组件">初探 axhal 组件</a></h3>
+<p>我们都知道，输出都是通过硬件完成的，正如你现在正在看的这份文档，它能显示在屏幕上都得益于我们的操作系统为我们封装好了硬件操作并能够执行它。但是我们的目标不正是写一个操作系统吗，所以很遗憾我们只能自己添加上与硬件相关的层的封装了，axhal 应运而生。</p>
+<pre class="mermaid">graph TD
+axhal
+</pre>
+<p>在 ArceOS 中，axhal 组件提供了一层针对不同硬件平台的硬件封装，它为指定的操作平台进行引导和初始化过程，并提供对硬件的操作。例如 modules/axhal/src/platform/qemu_virt_riscv/console.rs 里面提供了对字符输出的封装，我们可以直接调用其中的 putchar 函数进行字符的输出，而不是一次又一次地使用 sbi 这样汇编级别的代码进行输出。</p>
+<p>其实在 ArceOS 里面，putchar函数经过了许多层的封装已经变成类似于 print 这样方便用户使用的函数了，helloworld unikernel 里面的输出调用链可以查看本章第三部分， 但其实 helloworld 输出的本质还是调用 axhal 组件的putchar函数，接下来让我们抛掉方便用户调用的封装，通过对 axhal 代码的一些修改，来直观地感受一下系统启动和调用 axhal 所提供的 putchar 函数进行输出的流程。</p>
+<h3 id="动手尝试"><a class="header" href="#动手尝试">动手尝试</a></h3>
+<p>以 qemu_virt_riscv 平台为例， 我们首先关注 modules/axhal/src/platform/qemu_virt_riscv/boot.rs 这个文件， 其中的 _start() 函数被链接到 &quot;.text.boot&quot; 段， 作为 ArceOS 运行的第一段代码。具体的不同段的分配可以查看 modules/axhal/linker.lds.S 文件。</p>
+<p>接下来我们尝试在里面直接调用 ArceOS 为我们封装好的 sbi 函数进行输出，首先添加 console_putchar 函数方便输出我们想要输出的结果。</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>unsafe fn console_putchar() {
+  putchar(10); // 打印换行符
+  putchar(72); // 打印&quot;H“
+  putchar(69); // 打印&quot;E“
+  putchar(76); // 打印&quot;L“
+  putchar(76); // 打印&quot;L“
+  putchar(79); // 打印&quot;O“
+  // 下面可以输出任何想要的内容， 只需更改参数即可
+}
+<span class="boring">}</span></code></pre></pre>
+<p>然后我们需要在代码中加入对 console_putchar 函数的调用， 我们需要在初始化页表之后， 初始化 mmu 之前执行 console_putchar 函数。 并且添加</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>console_putchar = sym console_putchar,
+<span class="boring">}</span></code></pre></pre>
+<p>这一行， 以便汇编代码调用我们写的console_putchar函数</p>
+<p>然后我们在初始化页表之后和初始化mmu之前调用输出：</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>call {init_boot_page_table}
+call {console_putchar}
+call {init_mmu}
+<span class="boring">}</span></code></pre></pre>
+<p>//  TODO!  完整的代码 (boot.rs) 见实验部分</p>
+<p>此时我们只需执行: </p>
+<pre><code class="language-shell">make ARCH=riscv64 A=apps/helloworld run
+</code></pre>
+<p>如无意外， 我们在打印 ArceOS 的 LOGO 之前看到了我们调用 putchar 函数进行的输出 &quot;HELLO FROM SBI&quot;， 当然，每个字符的输出只需要在 console_putchar 中自行添加即可。 </p>
+<p><img src="https://s2.loli.net/2023/07/06/OKws6HjEV478J5D.png" alt="image-20230706161125604" /></p>
+<h3 id="总结"><a class="header" href="#总结">总结</a></h3>
+<p>至此，我们已经完成了从系统引导到输出的最小流程， 而且从开机到输出这个过程不依赖于 axhal 外的任一组件，并且是可以在真实的硬件环境中(例如 CV1811H 的 riscv 开发板)进行输出的， 这也体现了 ArceOS 的设计思路， 我们只需要复用这一个模块，就能很方便地对硬件进行操作了。 </p>
+<h3 id="附录"><a class="header" href="#附录">附录</a></h3>
+<h4 id="axhal-模块简介"><a class="header" href="#axhal-模块简介"><code>axhal</code> 模块简介：</a></h4>
+<p>模块源码位置：<a href="https://github.com/rcore-os/arceos/tree/main/modules/axhal">modules/axhal</a></p>
+<p>功能描述： ArceOS的硬件抽象层，负责为不同操作平台提供统一的API。它为指定的操作平台进行引导和初始化过程，并在硬件上提供有用的操作。当前主要支持pc-x86<code>、</code>qemu-virt-riscv<code>、</code>qemu-virt-aarch64`等平台。</p>
+<h4 id="关于这部分的一些思路来源和背景补充"><a class="header" href="#关于这部分的一些思路来源和背景补充">关于这部分的一些思路来源和背景补充：</a></h4>
+<p>当我们尝试在 CV1811H 开发板上移植ArceOS时，我们发现 uboot 引导后在开发板上没有任何的输出，而我们解决这个问题的办法就是抛弃掉上层的复杂的输出封装，使用最原始的 sbi_call 函数（当时也没有使用ArceOS包装好的putchar函数）在axhal 中进行输出。依靠这个最简单的输出，我们初步地移植了ArceOS到 CV1811H 开发板上。实际上，从引导部分的代码也可以看出，axhal 是一个不可分割的组件，它就像一个封装好的库供上层调用，这也意味着单独为其开一节教程不足以展示它的所有功能，我们所希望的是通过输出这一小功能，让大家感知到这个最底层的 axhal 模块。</p>
+<p><a href="https://github.com/orgs/rcore-os/discussions/24">关于在CV1811H移植ArceOS的工作</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="helloworld-程序基于-axhal-组件实现输出"><a class="header" href="#helloworld-程序基于-axhal-组件实现输出">helloworld 程序基于 axhal 组件实现输出</a></h2>
+<p>按照上一部分，既然 axhal 组件已经为我们准备好了 putchar 输出函数，其实我们已经可以编写 helloworld 程序进行输出了，如果关注了第三部分中 helloworld 运行的完整流程图就可以发现 helloworld 的运行还依赖于 libax，libax 就是提供一层类似于库函数的封装，它实现输出的本质还是用到我们提到的 axhal 中的输出，我们在此部分更多考虑地是 helloworld 与 axhal 组件进行搭配并且输出的过程，libax 可以看成是 helloworld 程序的一部分。</p>
+<h3 id="动手尝试-1"><a class="header" href="#动手尝试-1">动手尝试</a></h3>
+<pre class="mermaid">graph TD
+helloworld --&gt; axhal
+</pre>
+<p>我们看到 boot.rs 的汇编代码最后有一段跳转到 entry 的代码， 目前来说，ArceOS 运行到这里之后，就会跳转到 rust_entry 函数（在axhal/src/platform/qemu_virt_riscv/mod.rs 文件中），这个函数会执行一些初始化流程，然后调用rust_main 函数（在 modules/axruntime/src/lib.rs 文件中）， rust_main 函数会根据选择的 feature 进行初始化的流程， 最后会调用应用程序的 main 函数。</p>
+<p>为避免引入过多组件， 我们直接将 axhal/src/platform/qemu_virt_riscv/mod.rs 里面 rust_entry 中调用的 rust_main() 函数换成应用程序的 main 函数(记得要在上面 extern 引用 main 函数)， 并加上一行 self::misc::terminate()， 方便 arceos 运行完程序后终止，以防止ArceOS卡死不能正常退出（目前退出的功能依赖于下一部分提到的axruntime组件）。</p>
+<p>axhal/src/platform/qemu_virt_riscv/mod.rs</p>
+<pre><pre class="playground"><code class="language-rust edition2021">extern &quot;C&quot; {
+    fn trap_vector_base();
+    fn rust_main(cpu_id: usize, dtb: usize);
+    fn main();  // 从外部引入main函数
+    #[cfg(feature = &quot;smp&quot;)]
+    fn rust_main_secondary(cpu_id: usize);
+}
+
+unsafe extern &quot;C&quot; fn rust_entry(cpu_id: usize, dtb: usize) {
+    crate::mem::clear_bss();
+    crate::cpu::init_primary(cpu_id);
+    crate::arch::set_trap_vector_base(trap_vector_base as usize);
+    // rust_main(cpu_id, dtb);
+    main();  // 跳转到应用程序的main函数
+    self::misc::terminate();  // 程序运行后终止
+}</code></pre></pre>
+<p>执行: </p>
+<pre><code class="language-shell">make ARCH=riscv64 A=apps/helloworld run
+</code></pre>
+<p>如无意外， helloworld成功输出！说明我们的思路是正确的，将要输出的内容通过 helloworld 传递给 axhal，这样只需要两个组件就能实现应用程序 helloworld 的运行和输出。</p>
+<p><img src="https://s2.loli.net/2023/07/06/3TNuBdRbEcCAevM.png" alt="image-20230706151516690" /></p>
+<h3 id="总结-1"><a class="header" href="#总结-1">总结</a></h3>
+<p>其实 helloworld 程序本质还是调用 axhal 的 sbi 输出功能（具体步骤见第三部分流程图），我们把两个组件结合了起来！这也体现了 ArceOS 的思想，只需要把需要的部分组合起来就能实现我们想要的功能。</p>
+<h3 id="附录-1"><a class="header" href="#附录-1">附录</a></h3>
+<p><a href="https://github.com/rcore-os/arceos/blob/main/apps/helloworld/src/main.rs">helloworld源代码</a> </p>
+<p><a href="https://github.com/rcore-os/arceos/blob/main/doc/apps_helloworld.md">helloworld文档</a> </p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="添加-axruntime-组件提供更完整的运行环境"><a class="header" href="#添加-axruntime-组件提供更完整的运行环境">添加 axruntime 组件提供更完整的运行环境</a></h2>
+<p>之所以将 helloworld 的 main 函数和 axhal 组合起来就能实现输出功能，是因为 helloworld 应用程序只用到了 axhal 提供的裸机输出功能， 如果我们需要支持更复杂的应用，axhal 提供的低级的裸机环境肯定不能满足我们的需求， 那么就需要用到 axruntime 这个更强大的组件了。</p>
+<p>axruntime 的主要功能是在进入应用程序的 main 函数之前执行一些初始化操作， 根据所选择的不同 feature 执行相对应的初始化过程。 </p>
+<pre class="mermaid">graph TD
+helloworld --&gt; axruntime --&gt; axhal
+</pre>
+<p>在这一节中我们直接使用 ArceOS 的源代码，将之前修改的代码还原，在 axhal 执行完后不是直接跳转到应用程序的 main 函数， 而是跳转到 axruntime 这个组件的 rust_main 函数，再跳转到 helloworld 的 main 函数。</p>
+<h3 id="动手尝试-2"><a class="header" href="#动手尝试-2">动手尝试</a></h3>
+<p>运行命令：</p>
+<pre><code class="language-shell">make ARCH= riscv64 A=apps/helloworld run LOG=debug
+</code></pre>
+<p>运行结果如下图，下面的调试输出信息绿色字体部分可以为我们直观地展示 axruntime 做的一些初始化的工作。</p>
+<p><img src="https://s2.loli.net/2023/07/07/5j7mDSt3oNqMHyd.png" alt="image-20230707100119498" /></p>
+<p>有了这三个组件，我们不仅能运行 helloworld 这样的简单程序，还能运行稍微复杂一些的程序。</p>
+<p>例如，运行 yield 应用程序 (FIFO scheduler): </p>
+<pre><code class="language-shell">make A=apps/task/yield ARCH=riscv64 LOG=info NET=y SMP=1 run
+</code></pre>
+<p>运行结果: </p>
+<p><img src="https://s2.loli.net/2023/07/07/OgBFrv8T1bmjEnG.png" alt="image-20230707143841246" /></p>
+<h3 id="运行过程分析"><a class="header" href="#运行过程分析">运行过程分析</a></h3>
+<p>让我们通过流程图看看 ArceOS 的运行背后到底发生了什么。</p>
+<p>第一步是一些初始化函数的调用过程。</p>
+<h4 id="step-1"><a class="header" href="#step-1">Step 1</a></h4>
+<pre class="mermaid">graph TD;
+    A[axhal::platform::qemu_virt_riscv::boot.rs::_boot] --&gt; init_boot_page_table;
+    A --&gt; init_mmu;
+    A --&gt; P[platform_init];
+    A --&gt; B[axruntime::rust_main];
+    P --&gt; P1[&quot;axhal::mem::clear_bss()&quot;];
+    P --&gt; P2[&quot;axhal::arch::riscv::set_trap_vector_base()&quot;];
+    P --&gt; P3[&quot;axhal::cpu::init_percpu()&quot;];
+    P --&gt; P4[&quot;axhal::platform::qemu_virt_riscv::irq.rs::init()&quot;];
+    P --&gt; P5[&quot;axhal::platform::qemu_virt_riscv::time.rs::init()&quot;];
+    B --&gt; axlog::init;
+    B --&gt; D[init_allocator];
+    B --&gt; remap_kernel_memory;
+    B --&gt; axtask::init_scheduler;
+    B --&gt; axdriver::init_drivers;
+    B --&gt; Q[axfs::init_filesystems];
+    B --&gt; axnet::init_network;
+    B --&gt; axdisplay::init_display;
+    B --&gt; init_interrupt;
+    B --&gt; mp::start_secondary_cpus;
+    B --&gt; C[main];
+    Q --&gt; Q1[&quot;disk=axfs::dev::Disk::new()&quot;];
+    Q --&gt; Q2[&quot;axfs::root::init_rootfs(disk)&quot;];
+    Q2 --fatfs--&gt; Q21[&quot;main_fs=axfs::fs::fatfs::FatFileSystem::new()&quot;];
+    Q2 --&gt; Q22[&quot;MAIN_FS.init_by(main_fs); MAIN_FS.init()&quot;];
+    Q2 --&gt; Q23[&quot;root_dir = RootDirectory::new(MAIN_FS)&quot;];
+    Q2 --devfs--&gt; Q24[&quot;axfs_devfs::DeviceFileSystem::new()&quot;];
+    Q2 --devfs--&gt; Q25[&quot;devfs.add(null, zero, bar)&quot;];
+    Q2 --&gt;Q26[&quot;root_dir.mount(devfs)&quot;];
+    Q2 --&gt;Q27[&quot;init ROOT_DIR, CURRENT_DIR&quot;];
+    D --&gt; E[&quot;In free memory_regions: axalloc::global_init&quot;];
+    D --&gt; F[&quot;In free memory_regions:  axalloc::global_add_memory&quot;];
+    E --&gt; G[axalloc::GLOBAL_ALLOCATOR.init];
+    F --&gt; H[axalloc::GLOBAL_ALLOCATOR.add_memory];
+    G --&gt; I[&quot;PAGE: self.palloc.lock().init&quot;];
+    G --&gt; J[&quot;BYTE: self.balloc.lock().init&quot;];
+    H --&gt; K[&quot;BYTE: self.balloc.lock().add_memory&quot;];
+    I --&gt; M[&quot;allocator::bitmap::BitmapPageAllocator::init()&quot;];
+    J --&gt;L[&quot;allocator::slab::SlabByteAllocator::init() self.inner = unsafe { Some(Heap::new(start, size))&quot;];
+    K --&gt; N[&quot;allocator::slab::SlabByteAllocator::add_memory:  self.inner_mut().add_memory(start, size);&quot;];
+
+
+</pre>
+<p>下面是 helloworld 程序的运行流程，实际上 helloworld 程序最后调用的是 axhal 封装好的输出功能，本质还是依靠 sbi 进行输出。</p>
+<h4 id="step-2"><a class="header" href="#step-2">Step 2</a></h4>
+<pre class="mermaid">graph TD;
+    A[main] --&gt; B[&quot;libax::println!(Hello, world!)&quot;];
+    B --&gt; C[libax:io::__print_impl];
+    C --&gt; D[INLINE_LOCK=Mutex::new];
+    C --&gt; _guard=INLINE_LOCK.lock;
+    C --&gt; E[&quot;stdout().write_fmt(args)&quot;];
+</pre>
+<h5 id="step-21"><a class="header" href="#step-21">step 2.1</a></h5>
+<pre class="mermaid">graph TD;
+    T[&quot;stdout()&quot;] --&gt; A[&quot;libax::io::stdio.rs::stdout()&quot;];
+    A --&gt; B[&quot;INSTANCE: Mutex&lt;StdoutRaw&gt; = Mutex::new(StdoutRaw)&quot;];
+    A --&gt; C[&quot;return Stdout { inner: &amp;INSTANCE }&quot;];
+</pre>
+<h5 id="step-22"><a class="header" href="#step-22">step 2.2</a></h5>
+<pre class="mermaid">graph TD;
+    T[&quot;stdout().write_fmt(args)&quot;] --&gt; A[&quot;Stdout::write&quot;];
+    A --&gt; B[&quot;self.inner.lock().write(buf)&quot;];
+    B --&gt; C[&quot;StdoutRaw::write&quot;];
+    C --&gt; D[&quot;axhal::console::write_bytes(buf);&quot;];
+    C --&gt; E[&quot;Ok(buf.len())&quot;];
+    D --&gt; F[&quot;putchar&quot;];
+    F --&gt; G[&quot;axhal::platform::qemu_virt_riscv::console::putchar&quot;];
+    G --&gt; H[&quot;sbi_rt::legacy::console_putchar&quot;];
+</pre>
+<h3 id="总结-2"><a class="header" href="#总结-2">总结</a></h3>
+<p>至此，我们已经完成了从 axhal 到 axruntime 到 helloworld 的组合了，并且将 helloworld unikernel 运行了起来。</p>
+<h3 id="附录-2"><a class="header" href="#附录-2">附录</a></h3>
+<ul>
+<li>
+<p><code>axruntime</code> 模块简介：</p>
+</li>
+<li>
+<p>模块源码位置：<a href="(https://github.com/rcore-os/arceos/tree/main/modules/axruntime)">modules/axruntime</a></p>
+<ul>
+<li>功能描述：在进入应用程序的 main 函数之前执行一些初始化操作， 根据所选择的 feature 执行相对应的初始化过程。</li>
+</ul>
+</li>
+<li>
+<p>流程图来源：</p>
+<ul>
+<li>
+<p>step 1 <a href="https://github.com/rcore-os/arceos/blob/main/doc/init.md">init</a></p>
+</li>
+<li>
+<p>step 2 <a href="https://github.com/rcore-os/arceos/blob/main/doc/apps_helloworld.md">helloworld</a></p>
+</li>
+</ul>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="由开启动态内存分配特性来初识系统相关和无关"><a class="header" href="#由开启动态内存分配特性来初识系统相关和无关">由开启动态内存分配特性来初识系统相关和无关</a></h2>
+<h3 id="前三个阶段总结"><a class="header" href="#前三个阶段总结">前三个阶段总结</a></h3>
+<p>在之前的部分中，我们以向屏幕打印“hello world”为目标，由简入繁，共经历了三个阶段，让我们做一个简单的总结：</p>
+<p>第一阶段，“未有天地之时，混沌状如鸡子”，构建一个可以与硬件交互的最小运行环境 axhal，也可以理解为，我们在完成引导和必要功能初始化之后就可以直接调用对应平台的汇编指令来实现打印 helloworld 的功能，此时用户所需功能（向屏幕打印“hello world”）和运行时环境是混合在一起的。</p>
+<p>第二阶段，“清轻者上升为天，重浊者下降为地”，上一阶段的程序分裂成 axhal+helloworld， 尝试将打印 helloworld 功能进行分离并扩展，令 helloworld 扩展成一个独立的 app。该阶段需要定义程序入口，我们尝试在 axhal 中设置入口点，令 axhal 经过引导之后直接跳转到 helloworld 中执行相应功能。</p>
+<p>第三阶段，“天生日月星辰，地生山川草木”，第二阶段的两个模块进一步分裂并扩展为 axhal+axruntime+helloworld，我们不满足于用户直接基于 axhal 提供的低级的裸环境来进行开发，所以将 axhal 包装并扩展成 axruntime 来提供各种运行时必要组件，和 axhal 相比，axruntime 掩盖了与底层硬件交互的复杂原理，此时 helloworld 的运行环境由直接依赖于 axhal 变成了更为高级更为强大的 axruntime。</p>
+<h3 id="系统无关和系统相关"><a class="header" href="#系统无关和系统相关">系统无关和系统相关</a></h3>
+<p>可以说在之前的部分中，就已经很好的体现出 ArceOS 形如细胞一样的强大分裂和扩展的功能。前三个阶段打印到屏幕的文字的实际存储位置位于 .text 段，由底层运行环境进行静态分配并管理的，这种管理方式的优势是开销小，性能高，缺点是灵活性不足。</p>
+<p>如果我们想尝试使用动态分配的类型怎么办？具体来说，我们想创建一个 String 类型的字符串，然后通过 println 的格式化功能将组装后的字符串打印到屏幕。这个功能应该如何实现呢？</p>
+<p>进一步分析上述的需求，发现我们的目的其实是操作系统 ArceOS 为用户的应用程序 helloworld 提供内存分配支持，那么如何优雅地为用户提供这种支持成了我们目前首要的目标。</p>
+<p>回想一下上一个章对 Unikernel 这个概念的讲解，操作系统种类繁多，但是通过将各个功能进行深入拆分和罗列，发现支撑操作系统的功能模块其实有共性可言，比如一个操作系统想要实现多个任务切换，那这个操作系统一定要涉及到任务（进程）的调度算法，而这种可以分离成单独的模块甚至可以被其他操作系统所复用的特点，在 ArceOS 的设计体系中我们称之为系统无关；而相反，前面涉及到的 axhal 和 axruntime，是 ArceOS 本身利用系统无关的组件为用户程序打造运行时环境的特定实现方式，这种组合扩展方式是不同于其他操作系统的。所以这类模块我们称其为系统相关，代表了操作系统通过系统无关组件来打造用户程序运行环境的独特方式，无法被其他系统所复用。</p>
+<p>具体到 ArceOS 的源码组成部分来看，目前 crates 文件夹下的模块属于是系统无关的模块，这些库可以理解为构建一个操作系统所需要的底层共性，我们以松耦合，高抽象的方式开发这些库，目的是后续可以为别的系统复用。modules 下的模块是 ArceOS 为了想要实现操作系统的必要功能而对 crates 的各种库组合和扩展后，更加接近用户应用层的抽象模块。</p>
+<h3 id="动手尝试-3"><a class="header" href="#动手尝试-3">动手尝试</a></h3>
+<p>​讲解完这两个基本概念，回到动态分配内存这个主题上，根据之前分类的标准，很容易发现动态分配特性是属于系统无关的，基于之前的调用依赖图，我们可以将其更新为如下图所示：</p>
+<pre class="mermaid">graph TD
+    helloworld--&gt;modules;
+    subgraph modules;
+    axruntime--&gt;axhal;
+    end
+    modules--&gt;crates;
+    subgraph crates;
+    allocator;
+    end
+</pre>
+<p>这里我们简化了一下，没有涉及到其他辅助类的模块的展示，只展示了必要的功能依赖链。</p>
+<p>具体体现在代码中，首先，我们修改 apps/helloworld/Cargo.toml，添加开启动态内存分配的特性：</p>
+<pre><code class="language-toml">[dependencies]
+libax = { path = &quot;../../ulib/libax&quot;, features=[&quot;alloc&quot;]} #尝试添加动态分配内存的feature
+</code></pre>
+<p>之后，我们修改 apps/helloworld/src/main.rs，尝试使用 alloc 特性提供的动态分配内存功能：</p>
+<pre><pre class="playground"><code class="language-rust edition2021">#![no_std]
+#![no_main]
+
+use libax::println;
+<span class="boring">为 helloworld 提供可以动态内存分配的字符串类型
+</span>use libax::string::String;
+
+#[no_mangle]
+fn main() {
+<span class="boring">	声明并初始化一个 String 字符串
+</span>    let s = String::from(&quot;I am ArceOS!&quot;);
+    println!(&quot;Hello, world! {}&quot;, s);
+}</code></pre></pre>
+<p>运行<code>make A=apps/helloworld ARCH=riscv64 LOG=info run</code>，此时运行结果如下图所示：</p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/07/08/12879bc9837566bb.png" alt="" /></p>
+<p>打印出”Hello world! I am ArceOS&quot;，说明我们成功为 helloworld 提供了动态内存分配功能。</p>
+<h3 id="总结-3"><a class="header" href="#总结-3">总结</a></h3>
+<p>其实像这种 ArceOS 在用户看不见的地方根据用户选择的特性需求，组装并扩展各种模块提供定制的运行环境，其实就是 ArceOS 的组件化运作的核心机制。我们从最简单的 helloworld 使用动态内存分配特性出发，“窥一斑而知全豹”，来触及 ArceOS 的核心运作机制。在后续的章节中我们会为读者展示 ArceOS 更为强大的功能特性，其功能运作的基本原理和 helloworld 是大体相似的，相信读者理解了这部分的内容，后续章节理解起来会更为顺畅一些。</p>
+<h3 id="附录-3"><a class="header" href="#附录-3">附录</a></h3>
+<p><code>allocator</code> 模块简介：</p>
+<p>模块源码位置：<a href="https://github.com/rcore-os/arceos/tree/main/crates/allocator">crates/allocator</a></p>
+<p>功能描述： <code>allocator</code> 模块提供了一个统一的接口，用于实现不同类型的内存分配器算法。该模块共包括三种不同类型的分配器：字节粒度内存分配器 (<code>ByteAllocator</code>)、页粒度内存分配器 (<code>PageAllocator</code>) 和唯一 ID 分配器 (<code>IdAllocator</code>)。每种分配器都有其特定的实现方式，例如 <code>BuddyByteAllocator</code> 和 <code>SlabByteAllocator</code> 对应的是字节粒度内存分配器，而 <code>BitmapPageAllocator</code> 对应的是页粒度内存分配器。这个模块使得不同的内存分配器可以更加灵活地组合和替换，实现更加高效和可靠的内存管理功能。</p>
+<p>ArceOS 设计思想推荐阅读：<a href="https://github.com/chyyuu/thoughts/blob/main/tangram-oskits.md">像开发应用一样开发操作系统</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="修改命令实现对features的细粒度控制"><a class="header" href="#修改命令实现对features的细粒度控制">修改命令实现对features的细粒度控制</a></h2>
+<h3 id="动手尝试-4"><a class="header" href="#动手尝试-4">动手尝试</a></h3>
+<p>这部分讲的是用户可以通过修改运行命令的内容，来进一步细粒度的控制特性，这个部分比较简单，读者可以很轻松地完成。</p>
+<p>以向屏幕打印日志信息为例，如果想要修改日志的过滤等级，例如，展示出 warn 级以上的日志（info 日志不会打印到屏幕上），可以修改原来的运行命令，这里还是以 qemu risv64 平台为例，原始命令为：</p>
+<pre><code class="language-bash">make A=apps/helloworld ARCH=riscv64 LOG=info run
+</code></pre>
+<p>尝试运行一下，发现 info 以上级别的日志会被打印出来（提示：绿色字体所在行为 info 级别的日志信息）：</p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/07/08/70bcb2d5d8955ed2.png" alt="" /></p>
+<p>如果修改 log 日志等级：</p>
+<pre><code class="language-bash">make A=apps/helloworld ARCH=riscv64 LOG=warn run
+</code></pre>
+<p>此时能够展示日志的最低级别提高到 warn，之前 info 级别的日志不会被打印到屏幕中，尝试运行上述命令，运行结果如下：</p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/07/08/ff2b0cf439009c81.png" alt="" /></p>
+<p>我们可以看到之前展示出来绿色字体的 info 日志行都消失了。</p>
+<h3 id="实现原理"><a class="header" href="#实现原理">实现原理</a></h3>
+<p>feature 的参数控制也是 ArceOS 的强大功能之一，和之前的部分不同，用户从开启或关闭 feature 变成了具体调整 feature 特性的参数，以达到自己所需要的最佳环境支持。用户通过运行命令来调整 feature 的流程可以用下图来表示：</p>
+<pre class="mermaid">graph TD
+	Client--&gt;|features|helloworld
+    helloworld--&gt;|features|modules;
+    subgraph modules;
+    axruntime--&gt;axhal;
+    end
+    modules--&gt;crates;
+    subgraph crates;
+    allocator;
+    end
+</pre>
+<p>结合图中展示和具体实现部分，用户 (Client) 通过命令传递想要控制的参数，自顶往下由 helloworld 传递到 modules，最终抵达 modules/axruntime/src/lib.rs(123 行)<code>axlog::set_max_level(option_env!(&quot;LOG&quot;).unwrap_or(&quot;&quot;));</code>这行代码, 接收用户在命令上设置的<code>LOG</code>控制参数来实现对日志过滤等级的控制。</p>
+<h3 id="总结-4"><a class="header" href="#总结-4">总结</a></h3>
+<p>用户通过命令进行其他参数控制也经历类似于 LOG 的 feature 传递，然后抵达真正的实现位置，将用户设置应用到系统上。虽然可能自顶向下的寻找路线不同（需要达到 不同 feature 对应的功能模块），所需要的路径长短不同（要控制的 feature 可能需要和硬件驱动进行交互），但是核心思想都是一致的。可以类比为用户是一个操控者，通过手中的线（feature 命令参数）来控制木偶（ArceOS）来达到他想要的展示动作（运行环境）。</p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/07/09/1f9a24064eb6d6db.png" alt="" /></p>
 
                     </main>
 
@@ -221,6 +761,8 @@
         <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="mermaid.min.js"></script>
+        <script src="mermaid-init.js"></script>
 
         <script>
         window.addEventListener('load', function() {

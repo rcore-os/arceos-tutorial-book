@@ -83,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">简明 Arceos Tutorial Book</a></li><li class="chapter-item expanded "><a href="ch01-00.html"><strong aria-hidden="true">1.</strong> 实验环境配置</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch01-01.html"><strong aria-hidden="true">1.1.</strong> OS 环境配置</a></li><li class="chapter-item expanded "><a href="ch01-02.html"><strong aria-hidden="true">1.2.</strong> Rust 开发环境配置</a></li><li class="chapter-item expanded "><a href="ch01-03.html"><strong aria-hidden="true">1.3.</strong> Qemu 模拟器安装</a></li><li class="chapter-item expanded "><a href="ch01-04.html"><strong aria-hidden="true">1.4.</strong> 其他工具安装</a></li><li class="chapter-item expanded "><a href="ch01-05.html" class="active"><strong aria-hidden="true">1.5.</strong> 运行Hello World</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">简明 Arceos Tutorial Book</a></li><li class="chapter-item expanded "><a href="ch01-00.html"><strong aria-hidden="true">1.</strong> 实验环境配置</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch01-01.html"><strong aria-hidden="true">1.1.</strong> OS 环境配置</a></li><li class="chapter-item expanded "><a href="ch01-02.html"><strong aria-hidden="true">1.2.</strong> Rust 开发环境配置</a></li><li class="chapter-item expanded "><a href="ch01-03.html"><strong aria-hidden="true">1.3.</strong> Qemu 模拟器安装</a></li><li class="chapter-item expanded "><a href="ch01-04.html"><strong aria-hidden="true">1.4.</strong> 其他工具安装</a></li><li class="chapter-item expanded "><a href="ch01-05.html" class="active"><strong aria-hidden="true">1.5.</strong> 运行Hello World</a></li></ol></li><li class="chapter-item expanded "><a href="ch02-00.html"><strong aria-hidden="true">2.</strong> unikernel基本概念</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch02-01.html"><strong aria-hidden="true">2.1.</strong> 什么是单核？</a></li><li class="chapter-item expanded "><a href="ch02-02.html"><strong aria-hidden="true">2.2.</strong> arceos的组成</a></li><li class="chapter-item expanded "><a href="ch02-03.html"><strong aria-hidden="true">2.3.</strong> 与具体OS⽆关的crates</a></li><li class="chapter-item expanded "><a href="ch02-04.html"><strong aria-hidden="true">2.4.</strong> 与具有OS相关的modules</a></li><li class="chapter-item expanded "><a href="ch02-05.html"><strong aria-hidden="true">2.5.</strong> arceos的框架设计</a></li></ol></li><li class="chapter-item expanded "><a href="ch03-00.html"><strong aria-hidden="true">3.</strong> 设计实现helloworld unikernel</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch03-01.html"><strong aria-hidden="true">3.1.</strong> 依靠axhal组件实现从系统引导到输出</a></li><li class="chapter-item expanded "><a href="ch03-02.html"><strong aria-hidden="true">3.2.</strong> helloworld程序基于axhal组件实现输出</a></li><li class="chapter-item expanded "><a href="ch03-03.html"><strong aria-hidden="true">3.3.</strong> 添加axruntime组件提供更完整的运行环境</a></li><li class="chapter-item expanded "><a href="ch03-04.html"><strong aria-hidden="true">3.4.</strong> 由开启动态内存分配特性来初识系统相关和无关</a></li><li class="chapter-item expanded "><a href="ch03-05.html"><strong aria-hidden="true">3.5.</strong> 修改命令实现对features的细粒度控制</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -169,8 +169,47 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h2 id="第五节"><a class="header" href="#第五节">第五节</a></h2>
+                        <h2 id="运行-helloworld-unikernel"><a class="header" href="#运行-helloworld-unikernel">运行 helloworld unikernel</a></h2>
+<p>本节介绍如何在 QEMU 模拟器上运行 helloworld unikernel。</p>
+<ol>
+<li>
+<p>执行如下命令，获取 ArceOS 源码包：</p>
+<p><code>git clone https://github.com/rcore-os/arceos.git</code></p>
+</li>
+<li>
+<p>进入arceos目录，执行如下命令，编译并运行 helloworld unikernel：</p>
+<p><code>make ARCH=riscv64 A=apps/helloworld run</code></p>
+<p>其中，</p>
+<p>ARCH 指定 CPU 体系架构，目前支持选项：<code>riscv64</code>, <code>aarch64</code>，<code>x86_64</code>。</p>
+<p>A 指定用户程序的相对路径。</p>
+</li>
+</ol>
+<p><img src="./img/01_05_01.png" alt="image-20230712163420462" /></p>
+<p>到这里，恭喜你完成了实验环境的配置，可以开始阅读教程的正文部分了！</p>
+<h3 id="q--a"><a class="header" href="#q--a">Q &amp; A</a></h3>
+<p>当代码跑不起来的时候，可以尝试：</p>
+<ul>
+<li>分支是否与 原版仓库（而非 fork 出来的仓库）的对应分支同步。如不同步的话考虑通过 <code>git pull</code> 进行更新。注：这是因为 Rust 的版本更迭较快，如不及时更新的话曾经能正常运行的代码也会无法运行。</li>
+<li>项目根目录下的 <code>rust-toolchain</code> 非常重要，它代表整个项目采用的 Rust 工具链版本。请务必保持其与原版仓库对应分支一致。</li>
+<li>通过 <code>make clean</code> 或者 <code>cargo clean</code> 删除构建产物，并重新 <code>make run</code> 。注：出现这样的问题通常说明框架的构建脚本存在 bug，可以提 issue。</li>
+</ul>
+<p>如果怀疑遇到了网络问题，可以检查：</p>
+<ul>
+<li>请按照本章说明进行 Rust 安装和 crates.io 镜像配置。通常情况下能够解决 Rust 工具链更新和下载已发布到 crates.io 上库的问题。</li>
+</ul>
+<!--
+- 如果发现在试图从 github 上下载下述几个库的时候卡死，可以修改 `arceos` 目录下的 `Cargo.toml` 替换为 gitee 上的镜像。例如，将：
 
+  > ```toml
+  > riscv = { git = "https://github.com/rcore-os/riscv", features = ["inline-asm"] }
+  > ```
+  
+  替换为：
+  
+  > ```toml
+  > riscv = { git = "https://gitee.com/rcore-os/riscv", features = ["inline-asm"] }
+  > ```
+-->
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
@@ -179,6 +218,9 @@
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
+                            <a rel="next" href="ch02-00.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -190,6 +232,9 @@
                         <i class="fa fa-angle-left"></i>
                     </a>
 
+                    <a rel="next" href="ch02-00.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>
@@ -216,6 +261,8 @@
         <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="mermaid.min.js"></script>
+        <script src="mermaid-init.js"></script>
 
 
     </div>
