@@ -14,6 +14,10 @@ jobs:
         uses: peaceiris/actions-mdbook@v1
         with:
           mdbook-version: 'latest'
+      - name: Setup mdbook mermaid env
+        run: cargo install mdbook-mermaid
+      - name: preprocess mdbook mermaid graph
+        run: mdbook-mermaid install ./docs
       - name: Build mdbook
         run: mdbook build docs
       - name: Deploy
