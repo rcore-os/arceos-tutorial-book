@@ -1,8 +1,12 @@
 # Arceos Tutorial Book
 
-Arceos Toturial Book的目标是通过`step by step`地建立不同类型和功能的OS kernel的过程来学习和掌握新的组件化OS的核心概念和对应实现，从而为进一步分析掌握设计实习的完整内核打下基础。
+Arceos Tutorial Book的目标是通过`step by step`地建立不同类型和功能的OS kernel的过程来学习和掌握新的组件化OS的核心概念和对应实现，从而为进一步分析掌握设计实习的完整内核打下基础。
 
-## 仓库目录
+## 文档架构
+
+* [Arceos Tutorial Book Framework初步方案](https://github.com/orgs/rcore-os/discussions/29#discussioncomment-6335849)
+
+## 文档目录和内容
 
 * `docs/`: 教学实验指导
 
