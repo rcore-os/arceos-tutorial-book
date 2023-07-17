@@ -170,38 +170,41 @@
                 <div id="content" class="content">
                     <main>
                         <h2 id="与具体-os-无关的-crates"><a class="header" href="#与具体-os-无关的-crates">与具体 OS 无关的 crates</a></h2>
+<p>Crates为Modules实现提供更底层的支持，通用的基础库，与os无关。</p>
 <h3 id="crates-列表"><a class="header" href="#crates-列表">Crates 列表</a></h3>
 <ul>
-<li><a href="../crates/allocator">allocator</a>: Various allocator algorithms in a unified interface.</li>
-<li><a href="../crates/arm_gic">arm_gic</a>: ARM Generic Interrupt Controller (GIC) register definitions and basic operations.</li>
-<li><a href="../crates/axerrno">axerrno</a>: Error code definition used by ArceOS.</li>
-<li><a href="../crates/axfs_devfs">axfs_devfs</a>: Device filesystem used by ArceOS.</li>
-<li><a href="../crates/axfs_vfs">axfs_vfs</a>: Virtual filesystem interfaces used by ArceOS.</li>
-<li><a href="../crates/axio">axio</a>: <code>std::io</code>-like I/O traits for <code>no_std</code> environment.</li>
-<li><a href="../crates/capability">capability</a>: Provide basic capability-based security.</li>
-<li><a href="../crates/crate_interface">crate_interface</a>: Provides a way to define an interface (trait) in a crate, but can implement or use it in any crate. <a href="https://crates.io/crates/crate_interface"><img src="https://img.shields.io/crates/v/crate_interface" alt="Crates.io" /></a></li>
-<li><a href="../crates/driver_block">driver_block</a>: Common traits and types for block storage drivers.</li>
-<li><a href="../crates/driver_common">driver_common</a>: Device driver interfaces used by ArceOS.</li>
-<li><a href="../crates/driver_display">driver_display</a>: Common traits and types for graphics device drivers.</li>
-<li><a href="../crates/driver_net">driver_net</a>: Common traits and types for network device (NIC) drivers.</li>
-<li><a href="../crates/driver_pci">driver_pci</a>: Structures and functions for PCI bus operations.</li>
-<li><a href="../crates/driver_virtio">driver_virtio</a>: Wrappers of some devices in the <code>virtio-drivers</code> crate, that implement traits in the <code>driver_common</code> series crates.</li>
-<li><a href="../../crates/flatten_objects">flatten_objects</a>: A container that stores numbered objects. Each object can be assigned with a unique ID.</li>
-<li><a href="../crates/handler_table">handler_table</a>: A lock-free table of event handlers. <a href="https://crates.io/crates/handler_table"><img src="https://img.shields.io/crates/v/handler_table" alt="Crates.io" /></a></li>
-<li><a href="../crates/kernel_guard">kernel_guard</a>: RAII wrappers to create a critical section with local IRQs or preemption disabled. <a href="https://crates.io/crates/kernel_guard"><img src="https://img.shields.io/crates/v/kernel_guard" alt="Crates.io" /></a></li>
-<li><a href="../crates/lazy_init">lazy_init</a>: A wrapper for lazy initialized values without concurrency safety but more efficient.</li>
-<li><a href="../crates/linked_list">linked_list</a>: Linked lists that supports arbitrary removal in constant time.</li>
-<li><a href="../crates/memory_addr">memory_addr</a>: Wrappers and helper functions for physical and virtual addresses. <a href="https://crates.io/crates/memory_addr"><img src="https://img.shields.io/crates/v/memory_addr" alt="Crates.io" /></a></li>
-<li><a href="../crates/page_table">page_table</a>: Generic page table structures for various hardware architectures.</li>
-<li><a href="../crates/page_table_entry">page_table_entry</a>: Page table entry definition for various hardware architectures.</li>
-<li><a href="../crates/percpu">percpu</a>: Define and access per-CPU data structures.</li>
-<li><a href="../crates/percpu_macros">percpu_macros</a>: Macros to define and access a per-CPU data structure.</li>
-<li><a href="../crates/ratio">ratio</a>: The type of ratios and related operations.</li>
-<li><a href="../crates/scheduler">scheduler</a>: Various scheduler algorithms in a unified interface.</li>
-<li><a href="../crates/slab_allocator">slab_allocator</a>: Slab allocator for <code>no_std</code> systems. Uses multiple slabs with blocks of different sizes and a linked list for blocks larger than 4096 bytes.</li>
-<li><a href="../crates/spinlock">spinlock</a>: <code>no_std</code> spin lock implementation that can disable kernel local IRQs or preemption while locking.</li>
-<li><a href="../crates/timer_list">timer_list</a>: A list of timed events that will be triggered sequentially when the timer expires.</li>
-<li><a href="../crates/tuple_for_each">tuple_for_each</a>: Provides macros and methods to iterate over the fields of a tuple struct.</li>
+<li>allocator: 内存分配算法，包括：bitmap、buddy、slab。</li>
+<li>arm_gic: ARM通用中断控制器 (GICv2) 。</li>
+<li>arm_pl011: ARM串行通信接口，用于处理器和外部设备之间的串行通信 。</li>
+<li>axerrno: ArceOS的错误码定义。</li>
+<li>axfs_devfs: ArceOS的设备（Device）文件系统，是axfs_vfs一种实现。</li>
+<li>axfs_ramfs: ArceOS的内存（RAM）文件系统，是axfs_vfs一种实现。</li>
+<li>axfs_vfs: ArceOS的虚拟文件系统接口。</li>
+<li>axio: no_std环境下的I/O traits 。</li>
+<li>capability: Capability-based security 通过设置访问权限控制对系统资源的访问。</li>
+<li>crate_interface: 提供一种在 crate 中定义接口（特征）的方法，其目的是解决循环依赖。</li>
+<li>driver_block: 通用的块存储（磁盘）驱动程序的接口定义。</li>
+<li>driver_common: ArceOS的通用设备驱动接口定义，包括：disk、serial port、 ethernet card、GPU。</li>
+<li>driver_display: 通用的图形设备驱动程序接口定义。</li>
+<li>driver_net: 通用的网络设备 (NIC) 驱动程序定义。</li>
+<li>driver_pci: 定义对PCI总线操作。</li>
+<li>driver_virtio: 实现在driver_common定义的驱动。</li>
+<li>flatten_objects: 为每个存储对象分配一个唯一的ID。</li>
+<li>handler_table: 无锁的事件处理程序表。</li>
+<li>kernel_guard: 利用RAII创建具有本地IRQ或禁用抢占的临界区，用于在内核中实现自旋锁。</li>
+<li>lazy_init: 延迟初始化。</li>
+<li>linked_list: 链表。</li>
+<li>memory_addr: 提供理物理和虚拟地址操作的辅助函数。</li>
+<li>page_table: 页表。</li>
+<li>page_table_entry: 页表项。</li>
+<li>percpu: per-CPU的数据结构。</li>
+<li>percpu_macros: per-CPU的数据结构的宏实现。</li>
+<li>ratio: 比率相关计算。</li>
+<li>scheduler: 统一的调度算法接口，包括：cfs、fifo、round_robin。</li>
+<li>slab_allocator: no_std 环境下的 Slab 分配器（一种内存管理算法）。</li>
+<li>spinlock: no_std 环境下的自旋锁实现。</li>
+<li>timer_list: 定时器，在计时器到期时触发。</li>
+<li>tuple_for_each: 提供遍历tuple字段的宏和方法。</li>
 </ul>
 
                     </main>

@@ -173,21 +173,21 @@
 <p>Arceos 是一个开源的、组件化的Unikernel。以组合组件库的方式构建系统。使用Rust开发。</p>
 <p>具有一下特点和功能:</p>
 <ul>
-<li>架构支持: x86_64, riscv64, aarch64</li>
-<li>平台支持: QEMU pc-q35 (x86_64), virt (riscv64/aarch64)</li>
-<li>多线程 Multi-thread</li>
-<li>FIFO/RR/CFS scheduler</li>
-<li>VirtIO net/blk/gpu drivers</li>
+<li>CPU架构: x86_64, riscv64, aarch64</li>
+<li>运行平台: QEMU pc-q35 (x86_64), virt (riscv64/aarch64)</li>
+<li>支持多线程: Multi-thread</li>
+<li>调度算法: FIFO/RR/CFS scheduler</li>
+<li>虚拟IO: VirtIO net/blk/gpu drivers</li>
 <li>网络协议: TCP/UDP net stack using smoltcp</li>
-<li>Synchronization/Mutex</li>
-<li>SMP scheduling with single run queue</li>
-<li>文件系统 File system</li>
+<li>同步/互斥: Synchronization/Mutex</li>
+<li>SMP调度: SMP scheduling with single run queue</li>
+<li>文件系统: File system</li>
 </ul>
 <h3 id="arceos-由appscratesmodules组成"><a class="header" href="#arceos-由appscratesmodules组成">Arceos 由apps、crates、modules组成</a></h3>
 <ul>
-<li>apps: 应用程序</li>
-<li>modules: 组件库</li>
-<li>crates: 函数库</li>
+<li>apps: 应用程序。它的运行需要依赖于modules组件库。</li>
+<li>modules: Arceos的组件库。</li>
+<li>crates: 通用的基础库。为modules实现提供支持。</li>
 </ul>
 <p>当前Arceos项目的apps列表如下:</p>
 <h4 id="applications-rust"><a class="header" href="#applications-rust">Applications (Rust)</a></h4>
