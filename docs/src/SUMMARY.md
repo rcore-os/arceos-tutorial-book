@@ -1,6 +1,6 @@
-# 简明 Arceos Tutorial Book
+# 简明 ArceOS Tutorial Book
 
-[简明 Arceos Tutorial Book](README.md)
+[简明 ArceOS Tutorial Book](README.md)
 
 - [实验环境配置](ch01-00.md)
 

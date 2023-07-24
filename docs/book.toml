@@ -3,7 +3,7 @@ authors = ["Jia Yuekai, Zhou Yi, Xie Kaizhi, YU Chen"]
 language = "cn"
 multilingual = false
 src = "src"
-title = "Arceos Tutorial Book"
+title = "ArceOS Tutorial Book"
 [rust]
 edition = "2021"
 [output.html.playpen]
