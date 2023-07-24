@@ -441,7 +441,12 @@ export PATH=`pwd`/x86_64-linux-musl-cross/bin:`pwd`/aarch64-linux-musl-cross/bin
 <tr><td>特权级</td><td>同一地址空间同一特权级。</td><td>只有进程管理和进程间通信在内核态</td><td>所有硬件操作在内核态</td></tr>
 <tr><td>代表系统</td><td>ArceOS、Unikraft、MirageOS、IncludeOS</td><td>QNX、MINIX、L4微内核系列</td><td>Linux、Windows</td></tr>
 </tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><h2 id="arceos设计原则和思路"><a class="header" href="#arceos设计原则和思路">ArceOS设计原则和思路</a></h2>
+</div>
+<h2 id="参考文献"><a class="header" href="#参考文献">参考文献</a></h2>
+<ul>
+<li><a href="https://github.com/chyyuu/aos_course_info/blob/master/unikernel-related.md">unikernel信息收集</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="arceos设计原则和思路"><a class="header" href="#arceos设计原则和思路">ArceOS设计原则和思路</a></h2>
 <h3 id="arceos要解决的问题"><a class="header" href="#arceos要解决的问题">ArceOS要解决的问题</a></h3>
 <h4 id="性能问题"><a class="header" href="#性能问题">性能问题</a></h4>
 <p>传统宏内核架构和微内核架构的操作系统在性能上有一些可以优化的地方，但在具体实施上又很难做到。</p>
@@ -484,6 +489,10 @@ export PATH=`pwd`/x86_64-linux-musl-cross/bin:`pwd`/aarch64-linux-musl-cross/bin
 <li>架构可扩展：除了单体内核架构，也可扩展威微内核架构和宏内核架构。</li>
 </ul>
 <p>简而言之，ArceOS是一个基于Rust语言的Unikernel，它的目标是为云计算平台提供一种高性能、高可靠、高安全、易开发的操作系统解决方案。ArceOS的设计思路是将操作系统的核心功能和应用程序紧密集成在一起，形成一个单一的可执行镜像，这个镜像包含了应用程序所需的所有功能组件，包括网络协议、文件系统和设备驱动等。而组成ArceOS的功能组件是可以独立存在的，并可以与其它功能组件组合，形成新的领域操作系统内核。</p>
+<h2 id="参考文献-1"><a class="header" href="#参考文献-1">参考文献</a></h2>
+<ul>
+<li><a href="https://github.com/chyyuu/thoughts/blob/main/tangram-oskits.md">像开发应用一样开发操作系统</a></li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="arceos-的组成"><a class="header" href="#arceos-的组成">ArceOS 的组成</a></h2>
 <p>ArceOS 是一个开源的、组件化的Unikernel。以组合组件库的方式构建系统。使用Rust开发。</p>
 <p>具有一下特点和功能:</p>
