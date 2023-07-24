@@ -13,7 +13,7 @@
 - [unikernel 基本概念](ch02-00.md)
 
   - [什么是单核？](ch02-01.md)
-  - [arceos 的组成](ch02-02.md)
+  - [设计原则和思路](ch02-02.md)
   - [与具体 OS 无关的 crates](ch02-03.md)
   - [与具有 OS 相关的 modules](ch02-04.md)
   - [arceos 的框架设计](ch02-05.md)
