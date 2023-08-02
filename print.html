@@ -912,9 +912,158 @@ fn main() {
 <p>用户通过命令进行其他参数控制也经历类似于 LOG 的 feature 传递，然后抵达真正的实现位置，将用户设置应用到系统上。虽然可能自顶向下的寻找路线不同（需要达到 不同 feature 对应的功能模块），所需要的路径长短不同（要控制的 feature 可能需要和硬件驱动进行交互），但是核心思想都是一致的。可以类比为用户是一个操控者，通过手中的线（feature 命令参数）来控制木偶（ArceOS）来达到他想要的展示动作（运行环境）。</p>
 <p><img src="https://s3.bmp.ovh/imgs/2023/07/09/1f9a24064eb6d6db.png" alt="" /></p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="设计实现协作式多任务unikernel"><a class="header" href="#设计实现协作式多任务unikernel">设计实现协作式多任务unikernel</a></h2>
+<p>在操作系统设计中，如何确保同时处理多个请求？我们可以使用线程或进程进行多任务处理实现，但还有一个选择——协作性多任务处理。</p>
+<p>这个选项是最困难的。在这里我们说操作系统当然很酷，它有调度程序和计划程序，它可以处理进程，线程，组织它们之间的切换，处理锁等，但它仍然不知道应用程序是如何工作的，而这些工作原理应该是我们作为开发人员所知道的。</p>
+<p>我们知道在CPU上会有短暂的时刻执行某些计算操作，但大多数时候我们都期望网​​络I/O能更清楚何时在处理多个请求之间切换。</p>
+<p>从操作系统的角度来看，协作式多任务只是一个执行线程，在其中，应用程序在处理多个请求/命令之间切换。通常情况是：只要一些数据到达，就会读取它们，解析请求，将数据发送到数据库，这是一个阻塞操作；而非堵塞操作时在等待来自数据库的响应时，可以开始处理另一个请求，它被称为“合作或协作”，因为所有任务/命令必须通过合作以使整个调度方案起作用。它们彼此交错，但是有一个控制线程，称为协作调度程序，其角色只是启动进程并让这些线程自动将控制权返回给它。</p>
+<p>这比线程的多任务处理更简单，因为程序员总是知道当一个任务执行时，另一个任务不会执行，虽然在单处理器系统中，线程应用程序也将以交错模式执行这种模型，但使用线程的程序员仍应考虑此方法的缺陷，以免应用程序在移动到多处理器系统时工作不正常。但是，即使在多处理器系统上，单线程异步系统也总是以交错方式执行。</p>
+<p>编写这样的程序的困难在于，这种切换，维护上下文的过程，将每个任务组织为一系列间歇性执行的较小步骤，落在开发人员身上。另一方面，我们获得了效率，因为没有不必要的切换，例如，在线程和进程之间切换时切换处理器上下文没有问题。</p>
+<p>在实现了Hello World编写和运行之后，我们终于可以首窥操作系统内核设计中的第一个重要部分：协作式多任务的实现。</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="协作式多任务的功能需求"><a class="header" href="#协作式多任务的功能需求">协作式多任务的功能需求</a></h2>
+<h3 id="协作式多任务的主体实现"><a class="header" href="#协作式多任务的主体实现">协作式多任务的主体实现</a></h3>
+<p>协作式多任务是一种任务调度方式，它与抢占式多任务(preemptive)相对应，关于后者，我们将在下一章详细说明。在本章学习中，我们先要了解“non-preeptive&quot;——或者说是协作的调度方式。比起抢占，它显得更加友善而不具有侵略性。要设计一个协作式多任务的unikernel，需要满足这些要求：</p>
+<ol>
+<li>
+<p>任务切换机制：实现任务的切换和调度，确保多个任务在适当的时候轮流执行。任务切换应该是协作式的，即任务自愿放弃执行权，而不是由系统强制进行切换。这部分的需求确定了unikernel需要依赖于<code>axtask</code>这一module以及<code>multitask</code>、<code>sched_fifo</code>、<code>sched_cfs</code>等任务管理相关的crates。</p>
+</li>
+<li>
+<p>上下文保存与恢复：在任务切换时，需要保存当前任务的上下文（包括寄存器、程序计数器、堆栈等状态），以便后续能够正确地恢复该任务的执行状态。这也包括了允许任务在运行过程中主动挂起自己，将执行权让给其他任务。同时，需要提供相应的机制来恢复挂起的任务继续执行。</p>
+</li>
+<li>
+<p>任务优先级管理：支持为不同的任务设置优先级，以确保高优先级的任务在系统资源有限时能够优先得到执行。在ArceOS支持的app中，<code>apps_priority</code>实现了这个目标。</p>
+</li>
+<li>
+<p>任务同步与通信：提供机制来实现任务之间的同步和通信，以防止竞态条件和数据访问冲突。在ArceOS中，我们可以参考app <code>parallel</code>了解具体的实现。</p>
+</li>
+<li>
+<p>定时器和延时：提供定时器功能，允许任务在一定时间后唤醒或执行延时操作。在ArceOS中，我们可以参考app <code>sleep</code>了解具体的实现。</p>
+</li>
+</ol>
+<p>可以感受到，比起Hello World，实现协作式多任务涉及到的modules和crates、调用了它们实现的app都大为增加。</p>
+<h3 id="调试和运行需求"><a class="header" href="#调试和运行需求">调试和运行需求</a></h3>
+<p>在Hello World的实现过程中，我们已经初步了解了ArceOS从代码再到硬件的落地，最后在嵌入式设备实机运行的过程。在本章，读者可以利用上一章的经验，在硬件设备对生成的二进制镜像进行调试。为此，在最终烧录时ArceOS也将实现开发者的调试和改造需求：</p>
+<ol>
+<li>
+<p>异常处理：处理任务执行过程中可能出现的异常情况，例如任务错误、内存越界等情况。这些比较难处理的错误需要日志的打印来实现，具体操作我们沿用了HelloWorld中的处理，同时引入了app <code>exception</code>细化异常打印日志。</p>
+</li>
+<li>
+<p>系统可扩展性：设计具有良好可扩展性的任务管理机制，允许动态地创建和销毁任务，以适应不同应用场景和任务数量的需求。在实现这个unikernel的app中（<code>parallel</code>、<code>priority</code>、<code>sleep</code>、<code>yield</code>），我们都进行了编译内核数、架构、日志输出粒度等的自由设置。</p>
+</li>
+</ol>
+<p>这些功能需求可以根据不同的应用场景和系统设计来进行调整和扩展。实现协作式多任务的关键在于任务的合作和互相信任，确保任务在适当的时机让出执行权，以实现良好的系统响应性和资源利用率。</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="协作式多任务相关的cratesmodules组成"><a class="header" href="#协作式多任务相关的cratesmodules组成">协作式多任务相关的crates/modules组成</a></h2>
+<h3 id="什么是crates和modules"><a class="header" href="#什么是crates和modules">什么是Crates和Modules</a></h3>
+<p>对于初学Rust的读者来说，在继续探索协作式多任务的具体实现前，最好先理解在Rust模块化编程中常见、并在ArceOS中广泛使用的crates和modules的定义。</p>
+<h4 id="crate箱"><a class="header" href="#crate箱">Crate：箱</a></h4>
+<p>Crate 是“箱子”的意思。在 《Rust 权威指南》中被翻译为“单元包”。因为Crate 是 Rust 的最小编译单元。</p>
+<ul>
+<li>Crate 在一个范围内将相关的功能组合在一起，并最终通过编译生成一个二进制文件或库。</li>
+<li>Crate 并不等同于一个 .rs 文件。Crate 可以就是一个 .rs 文件， .rs 文件还可以通过 mod 关键字引入其他 .rs 文件中的模块。</li>
+</ul>
+<p>所以 Crate 更严格的定义是一个<strong>用于生成库或可执行文件的树形模块结构</strong>。在上一章里最终实现的.bin文件即是依赖crate实现的。</p>
+<h4 id="module模块"><a class="header" href="#module模块">Module：模块</a></h4>
+<p>Rust 中，模块和单独的文件不存在必然关联。
+在编写 Rust 程序时，可以不使用模块。但是当一个 crate 中的代码越来越多时就会变得不好维护，所以就可以将其拆分成一个个独立的模块，以便于增强于可读性和代码复用。
+定义模块使用 mod 关键字。也就是说，一个文件中可以没有模块，也可以有多个模块。文件和模块不是一对一的关系。
+Rust 中的模块是一种
+同时，Module 还能控制代码的可见性，也就是将代码分为公开代码和私有代码，公开代码可以在项目外被使用，私有代码只能在项目内被访问。</p>
+<h3 id="协作式多任务unikernel依赖modules"><a class="header" href="#协作式多任务unikernel依赖modules">协作式多任务unikernel依赖modules</a></h3>
+<h4 id="从优先级的实现看modules"><a class="header" href="#从优先级的实现看modules">从优先级的实现看modules</a></h4>
+<p>想要确定一个任务什么时候需要终止运行或是与其它任务共享有限的资源，我们必须首先明确各个任务之间的优先级区别，而优先级一般是由各个任务的到达时间、运行时间等参数确定的。上面这段话涉及到两个关键点——任务本身和ArceOS选择的策略，分别对应到两个module：<code>axtask</code>以及<code>axalloc</code>；前者负责任务本身（如运行时长等）调配，后者负责操作系统的内存分配策略（cfs、fifo、rr等）的分配。</p>
+<p>对于这些分配的算法目前都已经有了成型的实现方法，换句话说它们其实是与操作系统无关的。对于ArceOS，我们可以借助这个特点将它们封装成与系统无关的modules。</p>
+<p>对于不同的任务，我们在priority中的<code>main.rs</code>进行了手动规定，读者也可以通过修改其中参数运行来观察优先级在不同策略下的分配：</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>const TASK_PARAMS: &amp;[TaskParam] = &amp;[
+    // four short tasks
+    TaskParam {
+        data_len: 40,
+        value: 1000000,
+        nice: 19,
+    },
+    TaskParam {
+        data_len: 40,
+        value: 1000000,
+        nice: 10,
+    },
+    TaskParam {
+        data_len: 40,
+        value: 1000000,
+        nice: 0,
+    },
+    TaskParam {
+        data_len: 40,
+        value: 1000000,
+        nice: -10,
+    },
+    // one long task
+    TaskParam {
+        data_len: 4,
+        value: 10000000,
+        nice: 0,
+    },
+];
+<span class="boring">}</span></code></pre></pre>
+<p>在上面的代码里我们规定了四个短任务和一个长任务，长度在参数<code>value</code>中确定任务的长度。有兴趣的同学可以在ArceOS的根文件目录下尝试运行以下命令体验不同的分配策略效果。</p>
+<pre><code class="language-bash">test_one &quot;SMP=1 LOG=info&quot; &quot;expect_info_smp1_fifo.out&quot;
+test_one &quot;SMP=1 LOG=info APP_FEATURES=sched_cfs&quot; &quot;expect_info_smp1_cfs.out&quot;
+test_one &quot;SMP=1 LOG=info APP_FEATURES=sched_rr&quot; &quot;expect_info_smp1_rr.out&quot;
+test_one &quot;SMP=4 LOG=info APP_FEATURES=sched_cfs&quot; &quot;expect_info_smp4_cfs.out&quot;
+</code></pre>
+<p>通过上面的任务，相信读者对<code>axtask</code>以及<code>axalloc</code>的功能已经有了初步的认识,接下来我们可以通过arceos提供的<code>yield</code>app来阐明与实现协作式多任务相关的crates。</p>
+<h4 id="yield产生多线程的测试"><a class="header" href="#yield产生多线程的测试">yield：产生多线程的测试</a></h4>
+<p>在上面的app中，我们实现了任务的调度，下一个目标即是实现任务间的切换。在任务切换中，线程间的切换相较于线程容易不少，所以我们先从<code>yield</code>这一app开始，初步了解实现协作式多任务最终目标前modules和crates是如何衔接的。</p>
+<p>现代的任务调度算法基本都是抢占式的，它要求每个应用只能连续执行一段时间，然后内核就会将它强制性切换出去。 一般将 时间片 (Time Slice) 作为应用连续执行时长的度量单位，每个时间片可能在毫秒量级。 一般使用时间片轮转算法 (RR, Round-Robin) 来对应用进行调度。为了实现协作的目标，在运行和测试这个app过程中需要选择传统的cfs或fifo进行测试。</p>
+<pre><pre class="playground"><code class="language-rust edition2021">fn main() {
+    for i in 0..NUM_TASKS {
+        task::spawn(move || {
+            println!(&quot;Hello, task {}! id = {:?}&quot;, i, task::current().id());
+            // 此时已经启动了yield
+            // preempt所需要的依赖libax/sched_rr并没有被包含进去,所以这里默认为协作式实现
+            #[cfg(not(feature = &quot;preempt&quot;))]
+            task::yield_now();
+
+            let order = FINISHED_TASKS.fetch_add(1, Ordering::Relaxed);
+            if option_env!(&quot;SMP&quot;) == Some(&quot;1&quot;) {
+                assert!(order == i); // FIFO scheduler
+            }
+        });
+    }
+    println!(&quot;Hello, main task{}!&quot;);
+    while FINISHED_TASKS.load(Ordering::Relaxed) &lt; NUM_TASKS {
+        #[cfg(not(feature = &quot;preempt&quot;))]
+        task::yield_now();
+    }
+    println!(&quot;Task yielding tests run OK!&quot;);
+}</code></pre></pre>
+<p>这是一个利用fifo算法进行线程管理的示例程序。从代码实现细节来看，主要分成两步实现：</p>
+<ol>
+<li>操作系统初始化，加载yield app。</li>
+<li>使用<code>task::spawn</code>循环来生成<code>NUM_TASKS</code>任务（类似于线程）。
+每个任务执行一个函数，只需打印其ID即可。
+如果禁用抢占，也就是应用协作式方法，任务会自动执行<code>yield</code>以放弃CPU。如果不使能SMP，使用单核编译，任务的执行顺序必须是<code>FIFO</code>。
+<code>main task</code>将等待所有其他任务完成。如果没有，则继续执行<code>yield</code>并等待。</li>
+</ol>
+<p>也就是说我们如果不规定APP_FEATURE内参数为抢占，那么将默认采取协作式进行实现。读者可以通过运行以下命令进行测试：</p>
+<pre><code class="language-bash">make A=apps/task/yield ARCH=riscv64 LOG=info NET=y SMP=1 run
+</code></pre>
+<p>启动yield的同时，我们实现了更加细节部分的调用，流程图如下：</p>
+<pre class="mermaid">graph TD;
+    T[&quot;main task&quot;] --&gt; A[&quot;axtask::lib::spawn&quot;];
+    A -- &quot;task_i&quot; --&gt; B[&quot;axtask::run_queue::AxRunqQueue.scheduler.push_back(tasak_i)&quot;];
+    A --&gt; C[&quot;RUN_QUEUE.lock()&quot;];
+    B -- &quot;repeat n times&quot; --&gt; A;
+    B -- &quot;main task&quot; --&gt; D[&quot;axtask::lib::yield_now&quot;];
+    D --&gt; E[&quot;axtask::run_queue::AxRunqQueue::resched_inner&quot;];
+    E -- &quot;prev&quot; --&gt; F[&quot;axtask::run_queue::AxRunqQueue.scheduler.push_back(prev)&quot;];
+    E -- &quot;next=axtask::run_queue::AxRunqQueue.scheduler.pop_front()&quot; --&gt; G[&quot;axtask::run_queue::AxRunqQueue:: switch_to(prev,next)&quot;];
+    G -- &quot;repeat n times&quot; --&gt; D;
+    G -- &quot;all n subtask finished&quot; --&gt; H[&quot;finished&quot;]
+</pre>
+<p>可以看到，我们在实现协作式多任务相关的unikernel时，需要在统一的接口实现内存分配的算法，包括了<code>alloc</code>和<code>paging</code>。实现具体分配算法时，则需要调用多任务相关的<code>multitask</code>和<code>schedule</code>两个crates。</p>
+<p>TODO：输出截图</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="协作式多任务的框架设计"><a class="header" href="#协作式多任务的框架设计">协作式多任务的框架设计</a></h2>
+<p>上一小节我们已经通过<code>yield</code>和<code>priority</code>初步了解了实现协作式多任务所需的crates和modules，相信有操作系统学习经验的读者也应该对这些算法有基本的了解。ArceOS以它的组件化和定制化见长，核心的设计亮点则是它的框架。本节将以<code>parallel</code>和<code>sleep</code>两个协作式核心应用的实现为基础介绍这部分unikernel的框架设计。</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="组装协作式多任务unikernel"><a class="header" href="#组装协作式多任务unikernel">组装协作式多任务unikernel</a></h2>
 
                     </main>

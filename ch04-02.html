@@ -170,6 +170,116 @@
                 <div id="content" class="content">
                     <main>
                         <h2 id="协作式多任务相关的cratesmodules组成"><a class="header" href="#协作式多任务相关的cratesmodules组成">协作式多任务相关的crates/modules组成</a></h2>
+<h3 id="什么是crates和modules"><a class="header" href="#什么是crates和modules">什么是Crates和Modules</a></h3>
+<p>对于初学Rust的读者来说，在继续探索协作式多任务的具体实现前，最好先理解在Rust模块化编程中常见、并在ArceOS中广泛使用的crates和modules的定义。</p>
+<h4 id="crate箱"><a class="header" href="#crate箱">Crate：箱</a></h4>
+<p>Crate 是“箱子”的意思。在 《Rust 权威指南》中被翻译为“单元包”。因为Crate 是 Rust 的最小编译单元。</p>
+<ul>
+<li>Crate 在一个范围内将相关的功能组合在一起，并最终通过编译生成一个二进制文件或库。</li>
+<li>Crate 并不等同于一个 .rs 文件。Crate 可以就是一个 .rs 文件， .rs 文件还可以通过 mod 关键字引入其他 .rs 文件中的模块。</li>
+</ul>
+<p>所以 Crate 更严格的定义是一个<strong>用于生成库或可执行文件的树形模块结构</strong>。在上一章里最终实现的.bin文件即是依赖crate实现的。</p>
+<h4 id="module模块"><a class="header" href="#module模块">Module：模块</a></h4>
+<p>Rust 中，模块和单独的文件不存在必然关联。
+在编写 Rust 程序时，可以不使用模块。但是当一个 crate 中的代码越来越多时就会变得不好维护，所以就可以将其拆分成一个个独立的模块，以便于增强于可读性和代码复用。
+定义模块使用 mod 关键字。也就是说，一个文件中可以没有模块，也可以有多个模块。文件和模块不是一对一的关系。
+Rust 中的模块是一种
+同时，Module 还能控制代码的可见性，也就是将代码分为公开代码和私有代码，公开代码可以在项目外被使用，私有代码只能在项目内被访问。</p>
+<h3 id="协作式多任务unikernel依赖modules"><a class="header" href="#协作式多任务unikernel依赖modules">协作式多任务unikernel依赖modules</a></h3>
+<h4 id="从优先级的实现看modules"><a class="header" href="#从优先级的实现看modules">从优先级的实现看modules</a></h4>
+<p>想要确定一个任务什么时候需要终止运行或是与其它任务共享有限的资源，我们必须首先明确各个任务之间的优先级区别，而优先级一般是由各个任务的到达时间、运行时间等参数确定的。上面这段话涉及到两个关键点——任务本身和ArceOS选择的策略，分别对应到两个module：<code>axtask</code>以及<code>axalloc</code>；前者负责任务本身（如运行时长等）调配，后者负责操作系统的内存分配策略（cfs、fifo、rr等）的分配。</p>
+<p>对于这些分配的算法目前都已经有了成型的实现方法，换句话说它们其实是与操作系统无关的。对于ArceOS，我们可以借助这个特点将它们封装成与系统无关的modules。</p>
+<p>对于不同的任务，我们在priority中的<code>main.rs</code>进行了手动规定，读者也可以通过修改其中参数运行来观察优先级在不同策略下的分配：</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>const TASK_PARAMS: &amp;[TaskParam] = &amp;[
+    // four short tasks
+    TaskParam {
+        data_len: 40,
+        value: 1000000,
+        nice: 19,
+    },
+    TaskParam {
+        data_len: 40,
+        value: 1000000,
+        nice: 10,
+    },
+    TaskParam {
+        data_len: 40,
+        value: 1000000,
+        nice: 0,
+    },
+    TaskParam {
+        data_len: 40,
+        value: 1000000,
+        nice: -10,
+    },
+    // one long task
+    TaskParam {
+        data_len: 4,
+        value: 10000000,
+        nice: 0,
+    },
+];
+<span class="boring">}</span></code></pre></pre>
+<p>在上面的代码里我们规定了四个短任务和一个长任务，长度在参数<code>value</code>中确定任务的长度。有兴趣的同学可以在ArceOS的根文件目录下尝试运行以下命令体验不同的分配策略效果。</p>
+<pre><code class="language-bash">test_one &quot;SMP=1 LOG=info&quot; &quot;expect_info_smp1_fifo.out&quot;
+test_one &quot;SMP=1 LOG=info APP_FEATURES=sched_cfs&quot; &quot;expect_info_smp1_cfs.out&quot;
+test_one &quot;SMP=1 LOG=info APP_FEATURES=sched_rr&quot; &quot;expect_info_smp1_rr.out&quot;
+test_one &quot;SMP=4 LOG=info APP_FEATURES=sched_cfs&quot; &quot;expect_info_smp4_cfs.out&quot;
+</code></pre>
+<p>通过上面的任务，相信读者对<code>axtask</code>以及<code>axalloc</code>的功能已经有了初步的认识,接下来我们可以通过arceos提供的<code>yield</code>app来阐明与实现协作式多任务相关的crates。</p>
+<h4 id="yield产生多线程的测试"><a class="header" href="#yield产生多线程的测试">yield：产生多线程的测试</a></h4>
+<p>在上面的app中，我们实现了任务的调度，下一个目标即是实现任务间的切换。在任务切换中，线程间的切换相较于线程容易不少，所以我们先从<code>yield</code>这一app开始，初步了解实现协作式多任务最终目标前modules和crates是如何衔接的。</p>
+<p>现代的任务调度算法基本都是抢占式的，它要求每个应用只能连续执行一段时间，然后内核就会将它强制性切换出去。 一般将 时间片 (Time Slice) 作为应用连续执行时长的度量单位，每个时间片可能在毫秒量级。 一般使用时间片轮转算法 (RR, Round-Robin) 来对应用进行调度。为了实现协作的目标，在运行和测试这个app过程中需要选择传统的cfs或fifo进行测试。</p>
+<pre><pre class="playground"><code class="language-rust edition2021">fn main() {
+    for i in 0..NUM_TASKS {
+        task::spawn(move || {
+            println!(&quot;Hello, task {}! id = {:?}&quot;, i, task::current().id());
+            // 此时已经启动了yield
+            // preempt所需要的依赖libax/sched_rr并没有被包含进去,所以这里默认为协作式实现
+            #[cfg(not(feature = &quot;preempt&quot;))]
+            task::yield_now();
+
+            let order = FINISHED_TASKS.fetch_add(1, Ordering::Relaxed);
+            if option_env!(&quot;SMP&quot;) == Some(&quot;1&quot;) {
+                assert!(order == i); // FIFO scheduler
+            }
+        });
+    }
+    println!(&quot;Hello, main task{}!&quot;);
+    while FINISHED_TASKS.load(Ordering::Relaxed) &lt; NUM_TASKS {
+        #[cfg(not(feature = &quot;preempt&quot;))]
+        task::yield_now();
+    }
+    println!(&quot;Task yielding tests run OK!&quot;);
+}</code></pre></pre>
+<p>这是一个利用fifo算法进行线程管理的示例程序。从代码实现细节来看，主要分成两步实现：</p>
+<ol>
+<li>操作系统初始化，加载yield app。</li>
+<li>使用<code>task::spawn</code>循环来生成<code>NUM_TASKS</code>任务（类似于线程）。
+每个任务执行一个函数，只需打印其ID即可。
+如果禁用抢占，也就是应用协作式方法，任务会自动执行<code>yield</code>以放弃CPU。如果不使能SMP，使用单核编译，任务的执行顺序必须是<code>FIFO</code>。
+<code>main task</code>将等待所有其他任务完成。如果没有，则继续执行<code>yield</code>并等待。</li>
+</ol>
+<p>也就是说我们如果不规定APP_FEATURE内参数为抢占，那么将默认采取协作式进行实现。读者可以通过运行以下命令进行测试：</p>
+<pre><code class="language-bash">make A=apps/task/yield ARCH=riscv64 LOG=info NET=y SMP=1 run
+</code></pre>
+<p>启动yield的同时，我们实现了更加细节部分的调用，流程图如下：</p>
+<pre class="mermaid">graph TD;
+    T[&quot;main task&quot;] --&gt; A[&quot;axtask::lib::spawn&quot;];
+    A -- &quot;task_i&quot; --&gt; B[&quot;axtask::run_queue::AxRunqQueue.scheduler.push_back(tasak_i)&quot;];
+    A --&gt; C[&quot;RUN_QUEUE.lock()&quot;];
+    B -- &quot;repeat n times&quot; --&gt; A;
+    B -- &quot;main task&quot; --&gt; D[&quot;axtask::lib::yield_now&quot;];
+    D --&gt; E[&quot;axtask::run_queue::AxRunqQueue::resched_inner&quot;];
+    E -- &quot;prev&quot; --&gt; F[&quot;axtask::run_queue::AxRunqQueue.scheduler.push_back(prev)&quot;];
+    E -- &quot;next=axtask::run_queue::AxRunqQueue.scheduler.pop_front()&quot; --&gt; G[&quot;axtask::run_queue::AxRunqQueue:: switch_to(prev,next)&quot;];
+    G -- &quot;repeat n times&quot; --&gt; D;
+    G -- &quot;all n subtask finished&quot; --&gt; H[&quot;finished&quot;]
+</pre>
+<p>可以看到，我们在实现协作式多任务相关的unikernel时，需要在统一的接口实现内存分配的算法，包括了<code>alloc</code>和<code>paging</code>。实现具体分配算法时，则需要调用多任务相关的<code>multitask</code>和<code>schedule</code>两个crates。</p>
+<p>TODO：输出截图</p>
 
                     </main>
 
