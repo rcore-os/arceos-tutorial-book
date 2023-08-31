@@ -195,7 +195,7 @@ unsafe extern &quot;C&quot; fn rust_entry(cpu_id: usize, dtb: usize) {
     self::misc::terminate();  // 程序运行后终止
 }</code></pre></pre>
 <p>执行: </p>
-<pre><code class="language-shell">make ARCH=riscv64 A=apps/helloworld run
+<pre><code class="language-shell">make PLATFORM=riscv64-qemu-virt A=apps/helloworld run
 </code></pre>
 <p>如无意外， helloworld成功输出！说明我们的思路是正确的，将要输出的内容通过 helloworld 传递给 axhal，这样只需要两个组件就能实现应用程序 helloworld 的运行和输出。</p>
 <p><img src="https://s2.loli.net/2023/07/06/3TNuBdRbEcCAevM.png" alt="image-20230706151516690" /></p>

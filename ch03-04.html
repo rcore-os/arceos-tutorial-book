@@ -196,15 +196,15 @@
 <p>这里我们简化了一下，没有涉及到其他辅助类的模块的展示，只展示了必要的功能依赖链。</p>
 <p>具体体现在代码中，首先，我们修改 apps/helloworld/Cargo.toml，添加开启动态内存分配的特性：</p>
 <pre><code class="language-toml">[dependencies]
-libax = { path = &quot;../../ulib/libax&quot;, features=[&quot;alloc&quot;]} #尝试添加动态分配内存的feature
+axstd = { path = &quot;../../ulib/axstd&quot;, features=[&quot;alloc&quot;], optional = true } #尝试添加动态分配内存的feature
 </code></pre>
 <p>之后，我们修改 apps/helloworld/src/main.rs，尝试使用 alloc 特性提供的动态分配内存功能：</p>
 <pre><pre class="playground"><code class="language-rust edition2021">#![no_std]
 #![no_main]
 
-use libax::println;
+use axstd::println;
 <span class="boring">为 helloworld 提供可以动态内存分配的字符串类型
-</span>use libax::string::String;
+</span>use axstd::string::String;
 
 #[no_mangle]
 fn main() {
@@ -212,8 +212,8 @@ fn main() {
 </span>    let s = String::from(&quot;I am ArceOS!&quot;);
     println!(&quot;Hello, world! {}&quot;, s);
 }</code></pre></pre>
-<p>运行<code>make A=apps/helloworld ARCH=riscv64 LOG=info run</code>，此时运行结果如下图所示：</p>
-<p><img src="https://s3.bmp.ovh/imgs/2023/07/08/12879bc9837566bb.png" alt="" /></p>
+<p>运行<code>make PLATFORM=riscv64-qemu-virt A=apps/helloworld run</code>，此时运行结果如下图所示：</p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/08/24/60e8ff4c63aa0d80.png" alt="" /></p>
 <p>打印出”Hello world! I am ArceOS&quot;，说明我们成功为 helloworld 提供了动态内存分配功能。</p>
 <h3 id="总结"><a class="header" href="#总结">总结</a></h3>
 <p>其实像这种 ArceOS 在用户看不见的地方根据用户选择的特性需求，组装并扩展各种模块提供定制的运行环境，其实就是 ArceOS 的组件化运作的核心机制。我们从最简单的 helloworld 使用动态内存分配特性出发，“窥一斑而知全豹”，来触及 ArceOS 的核心运作机制。在后续的章节中我们会为读者展示 ArceOS 更为强大的功能特性，其功能运作的基本原理和 helloworld 是大体相似的，相信读者理解了这部分的内容，后续章节理解起来会更为顺畅一些。</p>

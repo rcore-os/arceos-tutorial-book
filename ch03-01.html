@@ -208,7 +208,7 @@ call {init_mmu}
 <span class="boring">}</span></code></pre></pre>
 <p>//  TODO!  完整的代码 (boot.rs) 见实验部分</p>
 <p>此时我们只需执行: </p>
-<pre><code class="language-shell">make ARCH=riscv64 A=apps/helloworld run
+<pre><code class="language-shell">make PLATFORM=riscv64-qemu-virt A=apps/helloworld run
 </code></pre>
 <p>如无意外， 我们在打印 ArceOS 的 LOGO 之前看到了我们调用 putchar 函数进行的输出 &quot;HELLO FROM SBI&quot;， 当然，每个字符的输出只需要在 console_putchar 中自行添加即可。 </p>
 <p><img src="https://s2.loli.net/2023/07/06/OKws6HjEV478J5D.png" alt="image-20230706161125604" /></p>

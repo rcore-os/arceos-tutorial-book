@@ -173,15 +173,15 @@
 <h3 id="动手尝试"><a class="header" href="#动手尝试">动手尝试</a></h3>
 <p>这部分讲的是用户可以通过修改运行命令的内容，来进一步细粒度的控制特性，这个部分比较简单，读者可以很轻松地完成。</p>
 <p>以向屏幕打印日志信息为例，如果想要修改日志的过滤等级，例如，展示出 warn 级以上的日志（info 日志不会打印到屏幕上），可以修改原来的运行命令，这里还是以 qemu risv64 平台为例，原始命令为：</p>
-<pre><code class="language-bash">make A=apps/helloworld ARCH=riscv64 LOG=info run
+<pre><code class="language-bash">make A=apps/helloworld PLATFORM=riscv64-qemu-virt LOG=info run
 </code></pre>
 <p>尝试运行一下，发现 info 以上级别的日志会被打印出来（提示：绿色字体所在行为 info 级别的日志信息）：</p>
-<p><img src="https://s3.bmp.ovh/imgs/2023/07/08/70bcb2d5d8955ed2.png" alt="" /></p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/08/24/5706b1bcd08e415a.png" alt="" /></p>
 <p>如果修改 log 日志等级：</p>
-<pre><code class="language-bash">make A=apps/helloworld ARCH=riscv64 LOG=warn run
+<pre><code class="language-bash">make A=apps/helloworld PLATFORM=riscv64-qemu-virt LOG=warn run
 </code></pre>
 <p>此时能够展示日志的最低级别提高到 warn，之前 info 级别的日志不会被打印到屏幕中，尝试运行上述命令，运行结果如下：</p>
-<p><img src="https://s3.bmp.ovh/imgs/2023/07/08/ff2b0cf439009c81.png" alt="" /></p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/08/24/d8b314bf0939c624.png" alt="" /></p>
 <p>我们可以看到之前展示出来绿色字体的 info 日志行都消失了。</p>
 <h3 id="实现原理"><a class="header" href="#实现原理">实现原理</a></h3>
 <p>feature 的参数控制也是 ArceOS 的强大功能之一，和之前的部分不同，用户从开启或关闭 feature 变成了具体调整 feature 特性的参数，以达到自己所需要的最佳环境支持。用户通过运行命令来调整 feature 的流程可以用下图来表示：</p>

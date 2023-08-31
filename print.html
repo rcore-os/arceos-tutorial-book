@@ -662,7 +662,7 @@ call {init_mmu}
 <span class="boring">}</span></code></pre></pre>
 <p>//  TODO!  完整的代码 (boot.rs) 见实验部分</p>
 <p>此时我们只需执行: </p>
-<pre><code class="language-shell">make ARCH=riscv64 A=apps/helloworld run
+<pre><code class="language-shell">make PLATFORM=riscv64-qemu-virt A=apps/helloworld run
 </code></pre>
 <p>如无意外， 我们在打印 ArceOS 的 LOGO 之前看到了我们调用 putchar 函数进行的输出 &quot;HELLO FROM SBI&quot;， 当然，每个字符的输出只需要在 console_putchar 中自行添加即可。 </p>
 <p><img src="https://s2.loli.net/2023/07/06/OKws6HjEV478J5D.png" alt="image-20230706161125604" /></p>
@@ -701,7 +701,7 @@ unsafe extern &quot;C&quot; fn rust_entry(cpu_id: usize, dtb: usize) {
     self::misc::terminate();  // 程序运行后终止
 }</code></pre></pre>
 <p>执行: </p>
-<pre><code class="language-shell">make ARCH=riscv64 A=apps/helloworld run
+<pre><code class="language-shell">make PLATFORM=riscv64-qemu-virt A=apps/helloworld run
 </code></pre>
 <p>如无意外， helloworld成功输出！说明我们的思路是正确的，将要输出的内容通过 helloworld 传递给 axhal，这样只需要两个组件就能实现应用程序 helloworld 的运行和输出。</p>
 <p><img src="https://s2.loli.net/2023/07/06/3TNuBdRbEcCAevM.png" alt="image-20230706151516690" /></p>
@@ -719,13 +719,13 @@ helloworld --&gt; axruntime --&gt; axhal
 <p>在这一节中我们直接使用 ArceOS 的源代码，将之前修改的代码还原，在 axhal 执行完后不是直接跳转到应用程序的 main 函数， 而是跳转到 axruntime 这个组件的 rust_main 函数，再跳转到 helloworld 的 main 函数。</p>
 <h3 id="动手尝试-2"><a class="header" href="#动手尝试-2">动手尝试</a></h3>
 <p>运行命令：</p>
-<pre><code class="language-shell">make ARCH= riscv64 A=apps/helloworld run LOG=debug
+<pre><code class="language-shell">make PLATFORM=riscv64-qemu-virt A=apps/helloworld run LOG=debug
 </code></pre>
 <p>运行结果如下图，下面的调试输出信息绿色字体部分可以为我们直观地展示 axruntime 做的一些初始化的工作。</p>
 <p><img src="https://s2.loli.net/2023/07/07/5j7mDSt3oNqMHyd.png" alt="image-20230707100119498" /></p>
 <p>有了这三个组件，我们不仅能运行 helloworld 这样的简单程序，还能运行稍微复杂一些的程序。</p>
 <p>例如，运行 yield 应用程序 (FIFO scheduler): </p>
-<pre><code class="language-shell">make A=apps/task/yield ARCH=riscv64 LOG=info NET=y SMP=1 run
+<pre><code class="language-shell">make A=apps/task/yield PLATFORM=riscv64-qemu-virt LOG=info NET=y SMP=1 run
 </code></pre>
 <p>运行结果: </p>
 <p><img src="https://s2.loli.net/2023/07/07/OgBFrv8T1bmjEnG.png" alt="image-20230707143841246" /></p>
@@ -854,15 +854,15 @@ helloworld --&gt; axruntime --&gt; axhal
 <p>这里我们简化了一下，没有涉及到其他辅助类的模块的展示，只展示了必要的功能依赖链。</p>
 <p>具体体现在代码中，首先，我们修改 apps/helloworld/Cargo.toml，添加开启动态内存分配的特性：</p>
 <pre><code class="language-toml">[dependencies]
-libax = { path = &quot;../../ulib/libax&quot;, features=[&quot;alloc&quot;]} #尝试添加动态分配内存的feature
+axstd = { path = &quot;../../ulib/axstd&quot;, features=[&quot;alloc&quot;], optional = true } #尝试添加动态分配内存的feature
 </code></pre>
 <p>之后，我们修改 apps/helloworld/src/main.rs，尝试使用 alloc 特性提供的动态分配内存功能：</p>
 <pre><pre class="playground"><code class="language-rust edition2021">#![no_std]
 #![no_main]
 
-use libax::println;
+use axstd::println;
 <span class="boring">为 helloworld 提供可以动态内存分配的字符串类型
-</span>use libax::string::String;
+</span>use axstd::string::String;
 
 #[no_mangle]
 fn main() {
@@ -870,8 +870,8 @@ fn main() {
 </span>    let s = String::from(&quot;I am ArceOS!&quot;);
     println!(&quot;Hello, world! {}&quot;, s);
 }</code></pre></pre>
-<p>运行<code>make A=apps/helloworld ARCH=riscv64 LOG=info run</code>，此时运行结果如下图所示：</p>
-<p><img src="https://s3.bmp.ovh/imgs/2023/07/08/12879bc9837566bb.png" alt="" /></p>
+<p>运行<code>make PLATFORM=riscv64-qemu-virt A=apps/helloworld run</code>，此时运行结果如下图所示：</p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/08/24/60e8ff4c63aa0d80.png" alt="" /></p>
 <p>打印出”Hello world! I am ArceOS&quot;，说明我们成功为 helloworld 提供了动态内存分配功能。</p>
 <h3 id="总结-3"><a class="header" href="#总结-3">总结</a></h3>
 <p>其实像这种 ArceOS 在用户看不见的地方根据用户选择的特性需求，组装并扩展各种模块提供定制的运行环境，其实就是 ArceOS 的组件化运作的核心机制。我们从最简单的 helloworld 使用动态内存分配特性出发，“窥一斑而知全豹”，来触及 ArceOS 的核心运作机制。在后续的章节中我们会为读者展示 ArceOS 更为强大的功能特性，其功能运作的基本原理和 helloworld 是大体相似的，相信读者理解了这部分的内容，后续章节理解起来会更为顺畅一些。</p>
@@ -884,15 +884,15 @@ fn main() {
 <h3 id="动手尝试-4"><a class="header" href="#动手尝试-4">动手尝试</a></h3>
 <p>这部分讲的是用户可以通过修改运行命令的内容，来进一步细粒度的控制特性，这个部分比较简单，读者可以很轻松地完成。</p>
 <p>以向屏幕打印日志信息为例，如果想要修改日志的过滤等级，例如，展示出 warn 级以上的日志（info 日志不会打印到屏幕上），可以修改原来的运行命令，这里还是以 qemu risv64 平台为例，原始命令为：</p>
-<pre><code class="language-bash">make A=apps/helloworld ARCH=riscv64 LOG=info run
+<pre><code class="language-bash">make A=apps/helloworld PLATFORM=riscv64-qemu-virt LOG=info run
 </code></pre>
 <p>尝试运行一下，发现 info 以上级别的日志会被打印出来（提示：绿色字体所在行为 info 级别的日志信息）：</p>
-<p><img src="https://s3.bmp.ovh/imgs/2023/07/08/70bcb2d5d8955ed2.png" alt="" /></p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/08/24/5706b1bcd08e415a.png" alt="" /></p>
 <p>如果修改 log 日志等级：</p>
-<pre><code class="language-bash">make A=apps/helloworld ARCH=riscv64 LOG=warn run
+<pre><code class="language-bash">make A=apps/helloworld PLATFORM=riscv64-qemu-virt LOG=warn run
 </code></pre>
 <p>此时能够展示日志的最低级别提高到 warn，之前 info 级别的日志不会被打印到屏幕中，尝试运行上述命令，运行结果如下：</p>
-<p><img src="https://s3.bmp.ovh/imgs/2023/07/08/ff2b0cf439009c81.png" alt="" /></p>
+<p><img src="https://s3.bmp.ovh/imgs/2023/08/24/d8b314bf0939c624.png" alt="" /></p>
 <p>我们可以看到之前展示出来绿色字体的 info 日志行都消失了。</p>
 <h3 id="实现原理"><a class="header" href="#实现原理">实现原理</a></h3>
 <p>feature 的参数控制也是 ArceOS 的强大功能之一，和之前的部分不同，用户从开启或关闭 feature 变成了具体调整 feature 特性的参数，以达到自己所需要的最佳环境支持。用户通过运行命令来调整 feature 的流程可以用下图来表示：</p>

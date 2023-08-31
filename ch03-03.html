@@ -178,13 +178,13 @@ helloworld --&gt; axruntime --&gt; axhal
 <p>在这一节中我们直接使用 ArceOS 的源代码，将之前修改的代码还原，在 axhal 执行完后不是直接跳转到应用程序的 main 函数， 而是跳转到 axruntime 这个组件的 rust_main 函数，再跳转到 helloworld 的 main 函数。</p>
 <h3 id="动手尝试"><a class="header" href="#动手尝试">动手尝试</a></h3>
 <p>运行命令：</p>
-<pre><code class="language-shell">make ARCH= riscv64 A=apps/helloworld run LOG=debug
+<pre><code class="language-shell">make PLATFORM=riscv64-qemu-virt A=apps/helloworld run LOG=debug
 </code></pre>
 <p>运行结果如下图，下面的调试输出信息绿色字体部分可以为我们直观地展示 axruntime 做的一些初始化的工作。</p>
 <p><img src="https://s2.loli.net/2023/07/07/5j7mDSt3oNqMHyd.png" alt="image-20230707100119498" /></p>
 <p>有了这三个组件，我们不仅能运行 helloworld 这样的简单程序，还能运行稍微复杂一些的程序。</p>
 <p>例如，运行 yield 应用程序 (FIFO scheduler): </p>
-<pre><code class="language-shell">make A=apps/task/yield ARCH=riscv64 LOG=info NET=y SMP=1 run
+<pre><code class="language-shell">make A=apps/task/yield PLATFORM=riscv64-qemu-virt LOG=info NET=y SMP=1 run
 </code></pre>
 <p>运行结果: </p>
 <p><img src="https://s2.loli.net/2023/07/07/OgBFrv8T1bmjEnG.png" alt="image-20230707143841246" /></p>
