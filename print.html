@@ -637,7 +637,9 @@ axhal
 <p>接下来我们尝试在里面直接调用 ArceOS 为我们封装好的 sbi 函数进行输出，首先添加 console_putchar 函数方便输出我们想要输出的结果。</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>unsafe fn console_putchar() {
+</span>use crate::console::putchar;
+
+unsafe fn console_putchar() {
   putchar(10); // 打印换行符
   putchar(72); // 打印&quot;H“
   putchar(69); // 打印&quot;E“
@@ -771,7 +773,7 @@ helloworld --&gt; axruntime --&gt; axhal
     G --&gt; J[&quot;BYTE: self.balloc.lock().init&quot;];
     H --&gt; K[&quot;BYTE: self.balloc.lock().add_memory&quot;];
     I --&gt; M[&quot;allocator::bitmap::BitmapPageAllocator::init()&quot;];
-    J --&gt;L[&quot;allocator::slab::SlabByteAllocator::init() self.inner = unsafe { Some(Heap::new(start, size))&quot;];
+    J --&gt;L[&quot;allocator::slab::SlabByteAllocator::init() self.inner = unsafe { Some(Heap::new(start, size)) } &quot;];
     K --&gt; N[&quot;allocator::slab::SlabByteAllocator::add_memory:  self.inner_mut().add_memory(start, size);&quot;];
 
 
@@ -857,17 +859,17 @@ helloworld --&gt; axruntime --&gt; axhal
 axstd = { path = &quot;../../ulib/axstd&quot;, features=[&quot;alloc&quot;], optional = true } #尝试添加动态分配内存的feature
 </code></pre>
 <p>之后，我们修改 apps/helloworld/src/main.rs，尝试使用 alloc 特性提供的动态分配内存功能：</p>
-<pre><pre class="playground"><code class="language-rust edition2021">#![no_std]
-#![no_main]
+<pre><pre class="playground"><code class="language-rust edition2021">#![cfg_attr(feature = &quot;axstd&quot;, no_std)]
+#![cfg_attr(feature = &quot;axstd&quot;, no_main)]
 
 use axstd::println;
-<span class="boring">为 helloworld 提供可以动态内存分配的字符串类型
-</span>use axstd::string::String;
+// 为 helloworld 提供可以动态内存分配的字符串类型
+use axstd::string::String;
 
-#[no_mangle]
+#[cfg_attr(feature = &quot;axstd&quot;, no_mangle)]
 fn main() {
-<span class="boring">	声明并初始化一个 String 字符串
-</span>    let s = String::from(&quot;I am ArceOS!&quot;);
+    // 声明并初始化一个 String 字符串
+    let s = String::from(&quot;I am ArceOS!&quot;);
     println!(&quot;Hello, world! {}&quot;, s);
 }</code></pre></pre>
 <p>运行<code>make PLATFORM=riscv64-qemu-virt A=apps/helloworld run</code>，此时运行结果如下图所示：</p>

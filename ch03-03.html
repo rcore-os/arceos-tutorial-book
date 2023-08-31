@@ -230,7 +230,7 @@ helloworld --&gt; axruntime --&gt; axhal
     G --&gt; J[&quot;BYTE: self.balloc.lock().init&quot;];
     H --&gt; K[&quot;BYTE: self.balloc.lock().add_memory&quot;];
     I --&gt; M[&quot;allocator::bitmap::BitmapPageAllocator::init()&quot;];
-    J --&gt;L[&quot;allocator::slab::SlabByteAllocator::init() self.inner = unsafe { Some(Heap::new(start, size))&quot;];
+    J --&gt;L[&quot;allocator::slab::SlabByteAllocator::init() self.inner = unsafe { Some(Heap::new(start, size)) } &quot;];
     K --&gt; N[&quot;allocator::slab::SlabByteAllocator::add_memory:  self.inner_mut().add_memory(start, size);&quot;];
 
 
