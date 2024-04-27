@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="cn" class="sidebar-visible no-js light">
+<html lang="cn" class="light" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -10,7 +10,7 @@
         
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="icon" href="favicon.svg">
         <link rel="shortcut icon" href="favicon.png">
@@ -31,7 +31,7 @@
         <!-- Custom theme stylesheets -->
 
     </head>
-    <body>
+    <body class="sidebar-visible no-js">
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
@@ -61,31 +61,38 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var html = document.querySelector('html');
+            var body = document.querySelector('body');
             var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
                 <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">简明 ArceOS Tutorial Book</a></li><li class="chapter-item expanded "><a href="ch01-00.html"><strong aria-hidden="true">1.</strong> 实验环境配置</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch01-01.html"><strong aria-hidden="true">1.1.</strong> OS 环境配置</a></li><li class="chapter-item expanded "><a href="ch01-02.html"><strong aria-hidden="true">1.2.</strong> Rust 开发环境配置</a></li><li class="chapter-item expanded "><a href="ch01-03.html"><strong aria-hidden="true">1.3.</strong> Qemu 模拟器安装</a></li><li class="chapter-item expanded "><a href="ch01-04.html"><strong aria-hidden="true">1.4.</strong> 其他工具安装</a></li><li class="chapter-item expanded "><a href="ch01-05.html"><strong aria-hidden="true">1.5.</strong> 运行 Hello World</a></li></ol></li><li class="chapter-item expanded "><a href="ch02-00.html"><strong aria-hidden="true">2.</strong> unikernel 基本概念</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch02-01.html"><strong aria-hidden="true">2.1.</strong> 设计原则和思路</a></li><li class="chapter-item expanded "><a href="ch02-02.html"><strong aria-hidden="true">2.2.</strong> ArceOS 框架设计</a></li><li class="chapter-item expanded "><a href="ch02-03.html"><strong aria-hidden="true">2.3.</strong> 与具体 OS 无关的 crates</a></li><li class="chapter-item expanded "><a href="ch02-04.html"><strong aria-hidden="true">2.4.</strong> 与具有 OS 相关的 modules</a></li></ol></li><li class="chapter-item expanded "><a href="ch03-00.html"><strong aria-hidden="true">3.</strong> 设计实现 helloworld unikernel</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch03-01.html"><strong aria-hidden="true">3.1.</strong> 依靠 axhal 组件实现从系统引导到输出</a></li><li class="chapter-item expanded "><a href="ch03-02.html"><strong aria-hidden="true">3.2.</strong> helloworld 程序基于 axhal 组件实现输出</a></li><li class="chapter-item expanded "><a href="ch03-03.html"><strong aria-hidden="true">3.3.</strong> 添加 axruntime 组件提供更完整的运行环境</a></li><li class="chapter-item expanded "><a href="ch03-04.html"><strong aria-hidden="true">3.4.</strong> 由开启动态内存分配特性来初识系统相关和无关</a></li><li class="chapter-item expanded "><a href="ch03-05.html"><strong aria-hidden="true">3.5.</strong> 修改命令实现对 features 的细粒度控制</a></li></ol></li><li class="chapter-item expanded "><a href="ch04-00.html"><strong aria-hidden="true">4.</strong> 设计实现协作式多任务 unikernel</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch04-01.html"><strong aria-hidden="true">4.1.</strong> 协作式多任务的功能需求</a></li><li class="chapter-item expanded "><a href="ch04-02.html" class="active"><strong aria-hidden="true">4.2.</strong> 协作式多任务相关的 crates/modules 组成</a></li><li class="chapter-item expanded "><a href="ch04-03.html"><strong aria-hidden="true">4.3.</strong> 协作式多任务的框架设计</a></li><li class="chapter-item expanded "><a href="ch04-04.html"><strong aria-hidden="true">4.4.</strong> 组装协作式多任务 unikernel</a></li></ol></li></ol>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
         </nav>
 
         <!-- Track and set sidebar scroll position -->
@@ -116,9 +123,9 @@
                                 <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -223,10 +230,10 @@ Rust 中的模块是一种
 ];
 <span class="boring">}</span></code></pre></pre>
 <p>在上面的代码里我们规定了四个短任务和一个长任务，长度在参数<code>value</code>中确定任务的长度。有兴趣的同学可以在ArceOS的根文件目录下尝试运行以下命令体验不同的分配策略效果。</p>
-<pre><code class="language-bash">test_one &quot;SMP=1 LOG=info&quot; &quot;expect_info_smp1_fifo.out&quot;
-test_one &quot;SMP=1 LOG=info APP_FEATURES=sched_cfs&quot; &quot;expect_info_smp1_cfs.out&quot;
-test_one &quot;SMP=1 LOG=info APP_FEATURES=sched_rr&quot; &quot;expect_info_smp1_rr.out&quot;
-test_one &quot;SMP=4 LOG=info APP_FEATURES=sched_cfs&quot; &quot;expect_info_smp4_cfs.out&quot;
+<pre><code class="language-bash">test_one "SMP=1 LOG=info" "expect_info_smp1_fifo.out"
+test_one "SMP=1 LOG=info APP_FEATURES=sched_cfs" "expect_info_smp1_cfs.out"
+test_one "SMP=1 LOG=info APP_FEATURES=sched_rr" "expect_info_smp1_rr.out"
+test_one "SMP=4 LOG=info APP_FEATURES=sched_cfs" "expect_info_smp4_cfs.out"
 </code></pre>
 <p>通过上面的任务，相信读者对<code>axtask</code>以及<code>axalloc</code>的功能已经有了初步的认识,接下来我们可以通过arceos提供的<code>yield</code>app来阐明与实现协作式多任务相关的crates。</p>
 <h4 id="yield产生多线程的测试"><a class="header" href="#yield产生多线程的测试">yield：产生多线程的测试</a></h4>
@@ -235,24 +242,24 @@ test_one &quot;SMP=4 LOG=info APP_FEATURES=sched_cfs&quot; &quot;expect_info_smp
 <pre><pre class="playground"><code class="language-rust edition2021">fn main() {
     for i in 0..NUM_TASKS {
         task::spawn(move || {
-            println!(&quot;Hello, task {}! id = {:?}&quot;, i, task::current().id());
+            println!("Hello, task {}! id = {:?}", i, task::current().id());
             // 此时已经启动了yield
             // preempt所需要的依赖libax/sched_rr并没有被包含进去,所以这里默认为协作式实现
-            #[cfg(not(feature = &quot;preempt&quot;))]
+            #[cfg(not(feature = "preempt"))]
             task::yield_now();
 
             let order = FINISHED_TASKS.fetch_add(1, Ordering::Relaxed);
-            if option_env!(&quot;SMP&quot;) == Some(&quot;1&quot;) {
+            if option_env!("SMP") == Some("1") {
                 assert!(order == i); // FIFO scheduler
             }
         });
     }
-    println!(&quot;Hello, main task{}!&quot;);
+    println!("Hello, main task{}!");
     while FINISHED_TASKS.load(Ordering::Relaxed) &lt; NUM_TASKS {
-        #[cfg(not(feature = &quot;preempt&quot;))]
+        #[cfg(not(feature = "preempt"))]
         task::yield_now();
     }
-    println!(&quot;Task yielding tests run OK!&quot;);
+    println!("Task yielding tests run OK!");
 }</code></pre></pre>
 <p>这是一个利用fifo算法进行线程管理的示例程序。从代码实现细节来看，主要分成两步实现：</p>
 <ol>
@@ -289,7 +296,7 @@ test_one &quot;SMP=4 LOG=info APP_FEATURES=sched_cfs&quot; &quot;expect_info_smp
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="ch04-03.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="ch04-03.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -303,7 +310,7 @@ test_one &quot;SMP=4 LOG=info APP_FEATURES=sched_cfs&quot; &quot;expect_info_smp
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="ch04-03.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="ch04-03.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

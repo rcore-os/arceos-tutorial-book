@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="cn" class="sidebar-visible no-js light">
+<html lang="cn" class="light" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -10,7 +10,7 @@
         
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="icon" href="favicon.svg">
         <link rel="shortcut icon" href="favicon.png">
@@ -31,7 +31,7 @@
         <!-- Custom theme stylesheets -->
 
     </head>
-    <body>
+    <body class="sidebar-visible no-js">
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
@@ -61,31 +61,38 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var html = document.querySelector('html');
+            var body = document.querySelector('body');
             var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
                 <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">简明 ArceOS Tutorial Book</a></li><li class="chapter-item expanded "><a href="ch01-00.html"><strong aria-hidden="true">1.</strong> 实验环境配置</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch01-01.html"><strong aria-hidden="true">1.1.</strong> OS 环境配置</a></li><li class="chapter-item expanded "><a href="ch01-02.html"><strong aria-hidden="true">1.2.</strong> Rust 开发环境配置</a></li><li class="chapter-item expanded "><a href="ch01-03.html" class="active"><strong aria-hidden="true">1.3.</strong> Qemu 模拟器安装</a></li><li class="chapter-item expanded "><a href="ch01-04.html"><strong aria-hidden="true">1.4.</strong> 其他工具安装</a></li><li class="chapter-item expanded "><a href="ch01-05.html"><strong aria-hidden="true">1.5.</strong> 运行 Hello World</a></li></ol></li><li class="chapter-item expanded "><a href="ch02-00.html"><strong aria-hidden="true">2.</strong> unikernel 基本概念</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch02-01.html"><strong aria-hidden="true">2.1.</strong> 设计原则和思路</a></li><li class="chapter-item expanded "><a href="ch02-02.html"><strong aria-hidden="true">2.2.</strong> ArceOS 框架设计</a></li><li class="chapter-item expanded "><a href="ch02-03.html"><strong aria-hidden="true">2.3.</strong> 与具体 OS 无关的 crates</a></li><li class="chapter-item expanded "><a href="ch02-04.html"><strong aria-hidden="true">2.4.</strong> 与具有 OS 相关的 modules</a></li></ol></li><li class="chapter-item expanded "><a href="ch03-00.html"><strong aria-hidden="true">3.</strong> 设计实现 helloworld unikernel</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch03-01.html"><strong aria-hidden="true">3.1.</strong> 依靠 axhal 组件实现从系统引导到输出</a></li><li class="chapter-item expanded "><a href="ch03-02.html"><strong aria-hidden="true">3.2.</strong> helloworld 程序基于 axhal 组件实现输出</a></li><li class="chapter-item expanded "><a href="ch03-03.html"><strong aria-hidden="true">3.3.</strong> 添加 axruntime 组件提供更完整的运行环境</a></li><li class="chapter-item expanded "><a href="ch03-04.html"><strong aria-hidden="true">3.4.</strong> 由开启动态内存分配特性来初识系统相关和无关</a></li><li class="chapter-item expanded "><a href="ch03-05.html"><strong aria-hidden="true">3.5.</strong> 修改命令实现对 features 的细粒度控制</a></li></ol></li><li class="chapter-item expanded "><a href="ch04-00.html"><strong aria-hidden="true">4.</strong> 设计实现协作式多任务 unikernel</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch04-01.html"><strong aria-hidden="true">4.1.</strong> 协作式多任务的功能需求</a></li><li class="chapter-item expanded "><a href="ch04-02.html"><strong aria-hidden="true">4.2.</strong> 协作式多任务相关的 crates/modules 组成</a></li><li class="chapter-item expanded "><a href="ch04-03.html"><strong aria-hidden="true">4.3.</strong> 协作式多任务的框架设计</a></li><li class="chapter-item expanded "><a href="ch04-04.html"><strong aria-hidden="true">4.4.</strong> 组装协作式多任务 unikernel</a></li></ol></li></ol>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
         </nav>
 
         <!-- Track and set sidebar scroll position -->
@@ -116,9 +123,9 @@
                                 <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -185,11 +192,11 @@ wget https://download.qemu.org/qemu-7.0.0.tar.xz
 tar xvJf qemu-7.0.0.tar.xz
 # 编译安装并配置 RISC-V 支持
 cd qemu-7.0.0
-./configure --target-list=riscv64-softmmu,riscv64-linux-user  # 如果要支持图形界面，可添加 &quot; --enable-sdl&quot; 参数
+./configure --target-list=riscv64-softmmu,riscv64-linux-user  # 如果要支持图形界面，可添加 " --enable-sdl" 参数
 make -j$(nproc)
 </code></pre>
 <blockquote>
-<p><font color=blue><strong>注解👉</strong></font>  </p>
+<p><font color=blue><strong>注解👉</strong></font> </p>
 <p>注意，上面的依赖包可能并不完全，比如在 Ubuntu 18.04 上：</p>
 <ul>
 <li>出现 <code>ERROR: pkg-config binary 'pkg-config' not found</code> 时，可以安装 <code>pkg-config</code> 包；</li>
@@ -225,7 +232,7 @@ sudo apt-get upgrade
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="ch01-04.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="ch01-04.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -239,7 +246,7 @@ sudo apt-get upgrade
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="ch01-04.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="ch01-04.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

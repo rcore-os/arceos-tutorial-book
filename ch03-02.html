@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="cn" class="sidebar-visible no-js light">
+<html lang="cn" class="light" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -10,7 +10,7 @@
         
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="icon" href="favicon.svg">
         <link rel="shortcut icon" href="favicon.png">
@@ -31,7 +31,7 @@
         <!-- Custom theme stylesheets -->
 
     </head>
-    <body>
+    <body class="sidebar-visible no-js">
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
@@ -61,31 +61,38 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var html = document.querySelector('html');
+            var body = document.querySelector('body');
             var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
                 <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">简明 ArceOS Tutorial Book</a></li><li class="chapter-item expanded "><a href="ch01-00.html"><strong aria-hidden="true">1.</strong> 实验环境配置</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch01-01.html"><strong aria-hidden="true">1.1.</strong> OS 环境配置</a></li><li class="chapter-item expanded "><a href="ch01-02.html"><strong aria-hidden="true">1.2.</strong> Rust 开发环境配置</a></li><li class="chapter-item expanded "><a href="ch01-03.html"><strong aria-hidden="true">1.3.</strong> Qemu 模拟器安装</a></li><li class="chapter-item expanded "><a href="ch01-04.html"><strong aria-hidden="true">1.4.</strong> 其他工具安装</a></li><li class="chapter-item expanded "><a href="ch01-05.html"><strong aria-hidden="true">1.5.</strong> 运行 Hello World</a></li></ol></li><li class="chapter-item expanded "><a href="ch02-00.html"><strong aria-hidden="true">2.</strong> unikernel 基本概念</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch02-01.html"><strong aria-hidden="true">2.1.</strong> 设计原则和思路</a></li><li class="chapter-item expanded "><a href="ch02-02.html"><strong aria-hidden="true">2.2.</strong> ArceOS 框架设计</a></li><li class="chapter-item expanded "><a href="ch02-03.html"><strong aria-hidden="true">2.3.</strong> 与具体 OS 无关的 crates</a></li><li class="chapter-item expanded "><a href="ch02-04.html"><strong aria-hidden="true">2.4.</strong> 与具有 OS 相关的 modules</a></li></ol></li><li class="chapter-item expanded "><a href="ch03-00.html"><strong aria-hidden="true">3.</strong> 设计实现 helloworld unikernel</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch03-01.html"><strong aria-hidden="true">3.1.</strong> 依靠 axhal 组件实现从系统引导到输出</a></li><li class="chapter-item expanded "><a href="ch03-02.html" class="active"><strong aria-hidden="true">3.2.</strong> helloworld 程序基于 axhal 组件实现输出</a></li><li class="chapter-item expanded "><a href="ch03-03.html"><strong aria-hidden="true">3.3.</strong> 添加 axruntime 组件提供更完整的运行环境</a></li><li class="chapter-item expanded "><a href="ch03-04.html"><strong aria-hidden="true">3.4.</strong> 由开启动态内存分配特性来初识系统相关和无关</a></li><li class="chapter-item expanded "><a href="ch03-05.html"><strong aria-hidden="true">3.5.</strong> 修改命令实现对 features 的细粒度控制</a></li></ol></li><li class="chapter-item expanded "><a href="ch04-00.html"><strong aria-hidden="true">4.</strong> 设计实现协作式多任务 unikernel</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ch04-01.html"><strong aria-hidden="true">4.1.</strong> 协作式多任务的功能需求</a></li><li class="chapter-item expanded "><a href="ch04-02.html"><strong aria-hidden="true">4.2.</strong> 协作式多任务相关的 crates/modules 组成</a></li><li class="chapter-item expanded "><a href="ch04-03.html"><strong aria-hidden="true">4.3.</strong> 协作式多任务的框架设计</a></li><li class="chapter-item expanded "><a href="ch04-04.html"><strong aria-hidden="true">4.4.</strong> 组装协作式多任务 unikernel</a></li></ol></li></ol>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
         </nav>
 
         <!-- Track and set sidebar scroll position -->
@@ -116,9 +123,9 @@
                                 <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -178,15 +185,15 @@ helloworld --&gt; axhal
 <p>我们看到 boot.rs 的汇编代码最后有一段跳转到 entry 的代码， 目前来说，ArceOS 运行到这里之后，就会跳转到 rust_entry 函数（在axhal/src/platform/qemu_virt_riscv/mod.rs 文件中），这个函数会执行一些初始化流程，然后调用rust_main 函数（在 modules/axruntime/src/lib.rs 文件中）， rust_main 函数会根据选择的 feature 进行初始化的流程， 最后会调用应用程序的 main 函数。</p>
 <p>为避免引入过多组件， 我们直接将 axhal/src/platform/qemu_virt_riscv/mod.rs 里面 rust_entry 中调用的 rust_main() 函数换成应用程序的 main 函数(记得要在上面 extern 引用 main 函数)， 并加上一行 self::misc::terminate()， 方便 arceos 运行完程序后终止，以防止ArceOS卡死不能正常退出（目前退出的功能依赖于下一部分提到的axruntime组件）。</p>
 <p>axhal/src/platform/qemu_virt_riscv/mod.rs</p>
-<pre><pre class="playground"><code class="language-rust edition2021">extern &quot;C&quot; {
+<pre><pre class="playground"><code class="language-rust edition2021">extern "C" {
     fn trap_vector_base();
     fn rust_main(cpu_id: usize, dtb: usize);
     fn main();  // 从外部引入main函数
-    #[cfg(feature = &quot;smp&quot;)]
+    #[cfg(feature = "smp")]
     fn rust_main_secondary(cpu_id: usize);
 }
 
-unsafe extern &quot;C&quot; fn rust_entry(cpu_id: usize, dtb: usize) {
+unsafe extern "C" fn rust_entry(cpu_id: usize, dtb: usize) {
     crate::mem::clear_bss();
     crate::cpu::init_primary(cpu_id);
     crate::arch::set_trap_vector_base(trap_vector_base as usize);
@@ -194,7 +201,7 @@ unsafe extern &quot;C&quot; fn rust_entry(cpu_id: usize, dtb: usize) {
     main();  // 跳转到应用程序的main函数
     self::misc::terminate();  // 程序运行后终止
 }</code></pre></pre>
-<p>执行: </p>
+<p>执行:</p>
 <pre><code class="language-shell">make PLATFORM=riscv64-qemu-virt A=apps/helloworld run
 </code></pre>
 <p>如无意外， helloworld成功输出！说明我们的思路是正确的，将要输出的内容通过 helloworld 传递给 axhal，这样只需要两个组件就能实现应用程序 helloworld 的运行和输出。</p>
@@ -202,8 +209,8 @@ unsafe extern &quot;C&quot; fn rust_entry(cpu_id: usize, dtb: usize) {
 <h3 id="总结"><a class="header" href="#总结">总结</a></h3>
 <p>其实 helloworld 程序本质还是调用 axhal 的 sbi 输出功能（具体步骤见第三部分流程图），我们把两个组件结合了起来！这也体现了 ArceOS 的思想，只需要把需要的部分组合起来就能实现我们想要的功能。</p>
 <h3 id="附录"><a class="header" href="#附录">附录</a></h3>
-<p><a href="https://github.com/rcore-os/arceos/blob/main/apps/helloworld/src/main.rs">helloworld源代码</a> </p>
-<p><a href="https://github.com/rcore-os/arceos/blob/main/doc/apps_helloworld.md">helloworld文档</a> </p>
+<p><a href="https://github.com/rcore-os/arceos/blob/main/apps/helloworld/src/main.rs">helloworld源代码</a></p>
+<p><a href="https://github.com/rcore-os/arceos/blob/main/doc/apps_helloworld.md">helloworld文档</a></p>
 
                     </main>
 
@@ -213,7 +220,7 @@ unsafe extern &quot;C&quot; fn rust_entry(cpu_id: usize, dtb: usize) {
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="ch03-03.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="ch03-03.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -227,7 +234,7 @@ unsafe extern &quot;C&quot; fn rust_entry(cpu_id: usize, dtb: usize) {
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="ch03-03.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="ch03-03.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
